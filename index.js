@@ -37,6 +37,10 @@ router.post(`/bot${TOKEN}`, ctx => {
     ctx.status = 200
 })
 
+router.get(`/`, ctx => {
+    ctx.status = 200
+})
+
 // Ставим мидлы
 
 app.use(bodyParser())
