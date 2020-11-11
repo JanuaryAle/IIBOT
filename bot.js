@@ -52,7 +52,7 @@ bot.help( async ctx => {
 })
 
 bot.command('bot', async ctx => {
-    ctx.replyWithHTML('Чем я могу вам послужить? Для перехода в нужный раздел, воспользуйтесь кнопками',
+    ctx.replyWithHTML('<b>Чем я могу вам послужить?<b>\n Для перехода в нужный раздел, воспользуйтесь кнопками:',
     Extra.HTML()
     .markup(Markup.inlineKeyboard([
     [
@@ -89,6 +89,6 @@ bot.action('vic', async ctx =>
     //await ctx.scene.enter('vic')
 })
 
-bot.launch(5000)
+//bot.launch(5000)
 
 module.exports = bot
