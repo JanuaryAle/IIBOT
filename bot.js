@@ -22,8 +22,6 @@ bot.use(session())
 
 bot.telegram.setWebhook(`${URL}/bot${TOKEN}`)
 
-// Стартовые команды
-
 const help =  `<b>Управлять мной довольно просто:\n\n</b>` 
             + `   ✔️ С помощью команд и кнопок вы всегда найдете нужный раздел\n`
             + `   ✔️ Когда захотите снова увидеть эту инструкию, используйте /help \n`
@@ -52,7 +50,7 @@ bot.help( async ctx => {
 })
 
 bot.command('bot', async ctx => {
-    ctx.replyWithHTML('<b>Чем я могу вам послужить?<b>\n Для перехода в нужный раздел, воспользуйтесь кнопками:',
+    ctx.replyWithHTML('<b>Чем я могу вам послужить?</b>\n Для перехода в нужный раздел, воспользуйтесь кнопками:',
     Extra.HTML()
     .markup(Markup.inlineKeyboard([
     [
@@ -88,7 +86,5 @@ bot.action('vic', async ctx =>
     ctx.reply('Вы в обучении')
     //await ctx.scene.enter('vic')
 })
-
-//bot.launch(5000)
 
 module.exports = bot
