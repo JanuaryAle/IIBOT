@@ -43,10 +43,10 @@ const app = new Koa()
 
 const router = Router()
 
-router.post(`/bot${TOKEN}`, ctx => {
+router.post(`/bot${TOKEN}`, async ctx => {
     const {body} = ctx.request
     console.log(`${body}\n${ctx.response}`)
-    bot.handleUpdate(body, ctx.response)
+    await bot.handleUpdate(ctx.request.body, ctx.response)
     ctx.status = 200
 })
 
