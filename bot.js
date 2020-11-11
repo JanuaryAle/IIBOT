@@ -7,6 +7,7 @@ const {
 } = Telegraf
 
 const TOKEN = process.env.BOT_TOKEN
+const URL = process.env.URL
 
 const bot = new Telegraf(TOKEN)
 
