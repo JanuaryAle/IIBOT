@@ -1,13 +1,41 @@
+const Telegraf = require('telegraf')
+const {
+    Markup,
+    Extra,
+    session
+} = Telegraf
 const Koa = require('koa')
 const Router = require('koa-router')
 const bodyParser = require('koa-bodyparser')
 require('dotenv').config()
 
-const bot = require('./bot.js')
-
 const TOKEN = process.env.BOT_TOKEN
 const PORT = process.env.PORT
 const URL = process.env.URL
+
+// Настройка бота
+
+const bot = new Telegraf(TOKEN)
+
+bot.use(async (ctx, next) => {
+    const start = new Date()
+    await next()
+    const response_time = new Date() - start
+    console.log(`(Response Time: ${response_time})`)
+  })
+
+bot.use(session())
+//bot.use(stage.middleware())
+
+bot.telegram.setWebhook(`${URL}/bot${TOKEN}`)
+
+bot.on('message', ctx => {
+    ctx.reply('Pong')
+})
+
+bot.hears(/\/help (.+)/, (ctx, [source, match]) => {
+    ctx.reply(match)
+})
 
 // Добавляем роуты
 
@@ -28,8 +56,6 @@ router.get(`/`, ctx => {    // Все ок, сервер работает
 
 app.use(bodyParser())
 app.use(router.routes())
-
-// Бот готов получать посты от телеги, он слушает
 
 app.listen(PORT, () => {
     console.log(`Listening on ${PORT}`)
