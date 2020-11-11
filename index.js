@@ -10,8 +10,6 @@ const URL = process.env.URL
 
 // Настройка бота
 
-const TOKEN = process.env.BOT_TOKEN
-
 const bot = new Telegraf(TOKEN)
 
 bot.use(async (ctx, next) => {
@@ -38,7 +36,7 @@ const help =  `Управлять мной довольно просто ☺️:
             + `   📍 Хотите узнать о нас больше? Информация о фонде будет находиться в разделе Фонд\n`          
             + `   📍 Советуем вам ознакомиться с нашими продуктами, представленными в разделе Услуги\n`
 
-bot.hears('start', async ctx => {
+bot.command('start', async ctx => {
     const userId = ctx.from.id
     const userFirstName = ctx.from.first_name
     const sayHello = `<b>Рад видеть вас здесь, <a href="tg://user?id=${userId}">${userFirstName}</a>!</b>`
