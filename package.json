@@ -4,10 +4,13 @@
   "description": "",
   "main": "index.js",
   "dependencies": {
+    "cheerio": "^1.0.0-rc.3",
     "dotenv": "^8.2.0",
     "koa": "^2.13.0",
     "koa-bodyparser": "^4.3.0",
     "koa-router": "^10.0.0",
+    "mongoose": "^5.10.13",
+    "needle": "^2.5.2",
     "ngrok": "^3.3.0",
     "node-telegram-bot-api": "^0.50.0",
     "nodemon": "^2.0.6",
