@@ -28,11 +28,16 @@ app.use(bot.webhookCallback(`/bot${TOKEN}`))
 app.use(bodyParser())
 app.use(router.routes())
 
-app.post(`/bot${TOKEN}`, async (ctx) => {
-    console.log(ctx)
-    await bot.handleUpdate(ctx.request.body, ctx.response)  // Наконец-то, эта штука задана правилно и бот реагирует
-    ctx.status = 200
-})
+app.use((ctx, next) => ctx.method === 'POST' || ctx.url === '/secret-path'
+  ? bot.handleUpdate(ctx.request.body, ctx.response)
+  : next()
+)
+
+// app.post(`/bot${TOKEN}`, async (ctx) => {
+//     console.log(ctx)
+//     await bot.handleUpdate(ctx.request.body, ctx.response)  // Наконец-то, эта штука задана правилно и бот реагирует
+//     ctx.status = 200
+// })
 
 app.listen(PORT, () => {
     console.log(`Listening on ${PORT}`)
