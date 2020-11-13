@@ -126,6 +126,4 @@ function clearStack(ctx){
             console.log(`\n\n${i}:\n${JSON.stringify(item)}`)
     //    ctx.telegram.deleteMessage(item.chat.id, item.message_id)
     })
-
-    stack = []
 }
