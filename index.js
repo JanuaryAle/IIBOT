@@ -23,6 +23,7 @@ router.post(`/bot${TOKEN}`, async (ctx, a) => {
     //console.log("a  " + a)
     await bot.handleUpdate(ctx.request.body, ctx.response)  // Наконец-то, эта штука задана правилно и бот реагирует
     ctx.status = 200
+    ctx.end()
 })
 
 router.get(`/`, ctx => {    // Все ок, сервер работает
