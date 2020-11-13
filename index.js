@@ -18,12 +18,6 @@ const app = new Koa()
 
 const router = Router()
 
-app.use((ctx, next) =>{ ctx.method === 'POST' || ctx.url === `/bot${TOKEN}`
-  ? bot.handleUpdate(ctx.request.body, ctx.response)
-  : next()
-  console.log(ctx)
-})
-
 router.get(`/`, ctx => {    // Все ок, сервер работает
     ctx.status = 200
 })
@@ -32,6 +26,12 @@ router.get(`/`, ctx => {    // Все ок, сервер работает
 
 app.use(bodyParser())
 app.use(router.routes())
+
+app.use((ctx, next) =>{ ctx.method === 'POST' || ctx.url === `/bot${TOKEN}`
+  ? bot.handleUpdate(ctx.request.body, ctx.response)
+  : next()
+  console.log(ctx)
+})
 
 app.listen(PORT, () => {
     console.log(`Listening on ${PORT}`)
