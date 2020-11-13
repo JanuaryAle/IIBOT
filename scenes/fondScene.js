@@ -75,8 +75,7 @@ class FondSceneGenerator{
                                 ctx.webhookReply = false
                                 flag = false
                                 const element = answers.values[+(ctx.callbackQuery.data)]
-                                await ctx.replyWithHTML(`<b>Вопрос:</b>\n${element.question}\n\n<b>Ответ:</b>\n${element.answer}`)
-                                stack.push(ctx.update)
+                                stack.push(await ctx.replyWithHTML(`<b>Вопрос:</b>\n${element.question}\n\n<b>Ответ:</b>\n${element.answer}`))
                                 ctx.webhookReply = true
                             }
                         }catch(e){} 
@@ -129,9 +128,10 @@ async function startPoint(ctx){
 function clearStack(ctx){
     
     stack.forEach((item, i) => {
-
+            if (item.message_id){
                 console.log(`\n\n${i}:\n${JSON.stringify(item)}`)
-             //   ctx.telegram.deleteMessage(item.chat.id, item.message_id)
+                ctx.telegram.deleteMessage(item.chat.id, item.message_id)
+            }
     })
     stack = []
 }
