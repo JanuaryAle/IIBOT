@@ -20,6 +20,7 @@ const router = Router()
 
 router.post(`/bot${TOKEN}`, async ctx => {
     await bot.handleUpdate(ctx.request.body, ctx.response)  // Наконец-то, эта штука задана правилно и бот реагирует
+    console.log('First = '+JSON.stringify(ctx.request.body) + `\n\n${ctx.response}`)
     ctx.status = 200
 })
 
