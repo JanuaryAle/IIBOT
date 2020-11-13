@@ -18,8 +18,7 @@ const app = new Koa()
 
 const router = Router()
 
-let webHookCallback = bot.webhookCallback(`/bot${TOKEN}`);
-router.post(`/bot${TOKEN}`, createExpressCallback(webHookCallback));
+app.use(bot.webhookCallback(`/bot${TOKEN}`));
 
 // router.post(`/bot${TOKEN}`, async ctx => {
 //     console.log(ctx)
@@ -41,10 +40,3 @@ app.listen(PORT, () => {
     console.log(`Listening on ${PORT}`)
 })
 
-function createExpressCallback (webHookCallback)
-{
-  return (request, response) =>
-  {
-    webHookCallback(request, response);
-  };
-};
