@@ -21,6 +21,7 @@ class FondSceneGenerator{
             startPoint(ctx)
         }, async ctx => {
             try{
+                console.log("1: "+ JSON.stringify(ctx))
                 if (typeof ctx.message !== "undefined" && callbackQuery === "ask"){
                     try{
                         console.log(ctx)
@@ -102,9 +103,10 @@ module.exports = new FondSceneGenerator().GetFondStage()
 }
 
 async function startPoint(ctx){
+    console.log("startPoint: "+ JSON.stringify(ctx))
     flag = true
     callbackQuery = ''
-    console.log(" Start Point :" + JSON.stringify(await ctx.replyWithHTML(`<b>Добро пожаловать в раздел нашего фонда, ${file.fondInfo.name}</b>\n`
+    await ctx.replyWithHTML(`<b>Добро пожаловать в раздел нашего фонда, ${file.fondInfo.name}</b>\n`
     + `Здесь мы расскажем вам о себе и будем рады услышать ваши вопросы.\n`
     + `Желаете получить оперативный ответ?\n🚀 Возможно, мы уже подготовили его в списке часто задаваемых вопросов😄\n`,
     Extra.HTML()
@@ -112,7 +114,8 @@ async function startPoint(ctx){
         [Markup.callbackButton('🙋‍♀️Давайте знакомиться', `more`)],
         [Markup.callbackButton('🗄Список возможных вопросов', 'ques')],
         [Markup.callbackButton('📝Задайте вопрос', 'ask')]
-        ])))))
+        ])))
+        console.log("startPointend: "+ JSON.stringify(ctx))
         return ctx.wizard.selectStep(1)
 }
 
