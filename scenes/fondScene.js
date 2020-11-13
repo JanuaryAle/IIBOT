@@ -46,28 +46,32 @@ class FondSceneGenerator{
                         clearStack(ctx)
                         flag = false
                         try{
-                            stack.push(await ctx.replyWithPhoto(file.fondInfo.imageSrc, Extra.load({
+                            await ctx.replyWithPhoto(file.fondInfo.imageSrc, Extra.load({
                                 parse_mode: 'HTML',
                                 caption: `<b>${file.fondInfo.name}</b>\n\n${file.fondInfo.description}`
                                 +`\n\n<b>${file.fondInfo.contact}</b>`
-                            }).markup(Markup.inlineKeyboard([Markup.callbackButton('🔙Назад', 'отмена')]))))
+                            }).markup(Markup.inlineKeyboard([Markup.callbackButton('🔙Назад', 'отмена')])))
+                            stack.push(ctx.update)
                         }catch(e){} 
                     }else if (callbackQuery === "ask"){
                             clearStack(ctx)
                             flag = false
-                            stack.push(await ctx.replyWithHTML("Что бы вы хотели узнать? Отправьте ваш вопрос и наши специалисты напишут вам в ближайшее время", Extra.HTML().markup(Markup.inlineKeyboard([[Markup.callbackButton('🔙Назад', 'отмена')]]))))
+                            await ctx.replyWithHTML("Что бы вы хотели узнать? Отправьте ваш вопрос и наши специалисты напишут вам в ближайшее время", Extra.HTML().markup(Markup.inlineKeyboard([[Markup.callbackButton('🔙Назад', 'отмена')]])))
+                            stack.push(ctx.update)
                     }
                     else if (callbackQuery === "ques"){
                         clearStack(ctx)
                         flag = false
-                        stack.push(await ctx.replyWithHTML("<b>Ниже представлен список часто задаваемых вопросов</b>\nКликните, чтобы увидеть ответ", Extra.HTML().markup(Markup.inlineKeyboard(convertKeyboard(answers.values)))))
+                        await ctx.replyWithHTML("<b>Ниже представлен список часто задаваемых вопросов</b>\nКликните, чтобы увидеть ответ", Extra.HTML().markup(Markup.inlineKeyboard(convertKeyboard(answers.values))))
+                        stack.push(ctx.update)
                     }else{
                         try {
                             var index = parseInt(callbackQuery)
                             if (index != NaN){
                                 flag = false
                                 const element = answers.values[+(ctx.callbackQuery.data)]
-                                stack.push(await ctx.replyWithHTML(`<b>Вопрос:</b>\n${element.question}\n\n<b>Ответ:</b>\n${element.answer}`))
+                                await ctx.replyWithHTML(`<b>Вопрос:</b>\n${element.question}\n\n<b>Ответ:</b>\n${element.answer}`)
+                                stack.push(ctx.update)
                             }
                         }catch(e){} 
                     }
@@ -117,17 +121,9 @@ async function startPoint(ctx){
 }
 
 function clearStack(ctx){
-    console.log(ctx)
-    for (key in ctx){
-        console.log(key+ "  :  " + ctx[key])
-    }
-    console.log(JSON.stringify(ctx.update))
     
-    stack.forEach(item => {
-        for (key in item){
-            console.log(key+ "  :  " + ctx[key])
-        }
-
+    stack.forEach((item, i) => {
+            console.log(`\n\n${i}:\n${item}`)
     //    ctx.telegram.deleteMessage(item.chat.id, item.message_id)
     })
 
