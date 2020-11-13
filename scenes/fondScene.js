@@ -104,7 +104,7 @@ module.exports = new FondSceneGenerator().GetFondStage()
 async function startPoint(ctx){
     flag = true
     callbackQuery = ''
-    console.log(await ctx.replyWithHTML(`<b>Добро пожаловать в раздел нашего фонда, ${file.fondInfo.name}</b>\n`
+    console.log(" Start Point :" + await ctx.replyWithHTML(`<b>Добро пожаловать в раздел нашего фонда, ${file.fondInfo.name}</b>\n`
     + `Здесь мы расскажем вам о себе и будем рады услышать ваши вопросы.\n`
     + `Желаете получить оперативный ответ?\n🚀 Возможно, мы уже подготовили его в списке часто задаваемых вопросов😄\n`,
     Extra.HTML()
@@ -120,7 +120,7 @@ function clearStack(ctx){
     
     stack.forEach(item => {
 
-        console.log(JSON.stringify(item.request.body))
+        console.log(JSON.stringify(item))
        // ctx.telegram.deleteMessage(item.chat.id, item.message_id)
     })
 
