@@ -18,11 +18,9 @@ const app = new Koa()
 
 const router = Router()
 
-router.post(`/bot${TOKEN}`, async ctx => {
-    await bot.handleUpdate(ctx.request.body, ctx.response)  // Наконец-то, эта штука задана правилно и бот реагирует
-    console.log('First = '+JSON.stringify(ctx.request.body) + `\n\n${ctx.response}`)
-    ctx.status = 200
-})
+app.use((ctx, next) => ctx.method === 'POST' || ctx.url === `/bot${TOKEN}` ?
+          bot.handleUpdate(ctx.request.body, ctx.response) :
+          next())
 
 router.get(`/`, ctx => {    // Все ок, сервер работает
     ctx.status = 200
