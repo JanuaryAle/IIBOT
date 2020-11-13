@@ -46,6 +46,7 @@ bot.telegram.setWebhook(`${URL}/bot${TOKEN}`)
 
 require('./util/globalCommands')(bot)
 
+
 bot.action(/fond|vic|prod|news/, async ctx => {
     const callbackQuery = ctx.callbackQuery.data
     await ctx.scene.enter(callbackQuery)        
