@@ -104,10 +104,13 @@ function convertButtons(options)
     });
     return keyboard
 }
-
 function clearStack(ctx){
+    
     stack.forEach(item => {
-        ctx.telegram.deleteMessage(item.chat.id, item.message_id)
+
+        console.log(JSON.stringify(itemctx.request.body))
+       // ctx.telegram.deleteMessage(item.chat.id, item.message_id)
     })
-    stack = []
+
+    //stack = []
 }
