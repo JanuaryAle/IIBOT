@@ -36,13 +36,14 @@ bot.use(async (ctx, next) => {
     await next()
     const response_time = new Date() - start
     console.log(`(Response Time: ${response_time})`)
+    console.log(`(ctx: ${ctx})`)
   })
 
 bot.use(session())
 bot.use(stage.middleware())
 stage.register(fondScene, newsScene, productScene, victoryScene, adminScene, fondSceneA)
 
-bot.telegram.setWebhook(`${URL}/bot${TOKEN}`)
+//bot.telegram.setWebhook(`${URL}/bot${TOKEN}`)
 
 require('./util/globalCommands')(bot)
 
@@ -52,5 +53,5 @@ bot.action(/fond|vic|prod|news/, async ctx => {
     await ctx.scene.enter(callbackQuery)        
 })
 
-//bot.launch(5000)
+bot.launch(5000)
 module.exports = bot
