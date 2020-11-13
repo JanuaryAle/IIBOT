@@ -8,14 +8,13 @@ var flag = false
 var prodList 
 var index
 var element
+
 class ProductSceneGenerator{
 
     GetProductsScene() {
         const item = new WizardScene('prod', 
         async (ctx) => {
             const promise = query.getAll()
-            await ctx.replyWithHTML("🛎Вы перешли в раздел предлагаемых услуг🛎", Markup.keyboard(
-                ['🔙Вернуться в меню']).resize().extra())
             promise.then(async (data) =>{
                 prodList = data
                 flag = false
@@ -25,21 +24,20 @@ class ProductSceneGenerator{
         }, async ctx => {
             try{
                 if (typeof ctx.callbackQuery !== "undefined"){
-                    index = +(ctx.callbackQuery.data)
-                    if (!isNaN(index)){
-                        element = prodList[index]
+                    const name = ctx.callbackQuery.data
+                    element = prodList.filter(item => item.name === name)[0]
+                    if (typeof element !== "undefined"){
                         replyProduct(ctx)   
                     }
-            }}catch(e){}
+            }}catch(e){console.log(e)}
         })
 
         require('../util/globalCommands')(item)
 
         item.action(/vic|fond|news/, async ctx => {
             const callbackQuery = ctx.callbackQuery.data
-            await ctx.scene.leave(callbackQuery)     
+            await ctx.scene.enter(callbackQuery)       
         })
-
         return item
     }
 }
@@ -49,7 +47,7 @@ module.exports = new ProductSceneGenerator().GetProductsScene()
 async function replyBeginMes(ctx)
 {
     if (!flag){
-        await ctx.replyWithHTML(`Нажмите на кнопку, чтобы увидеть подробности:`,
+        await ctx.replyWithHTML(`<b>Вы перешли в раздел наших услуг</b>\nЧтобы узнать подробнее об услуге, выберете ее из списка ниже`,
         Extra.HTML({parse_mode: 'HTML'})
         .markup(Markup.inlineKeyboard(convertListToMarkup())))
         flag = true
@@ -59,9 +57,8 @@ async function replyBeginMes(ctx)
 function convertListToMarkup(){
     var keyboard = []
     prodList.forEach((element, i) => {
-        keyboard.push([Markup.callbackButton(element.name, `${i}`)])
+        keyboard.push([Markup.callbackButton(element.name, `${element.name}`)])
     });
-    keyboard.push([Markup.callbackButton('🔙Вернуться в меню', 'return')])
     return keyboard
 }
 
@@ -70,14 +67,10 @@ async function replyProduct(ctx){
         flag = false
         try{
             await ctx.replyWithPhoto(element.imageSrc,
-                Extra.load())
-        }catch(e){}
-        await ctx.replyWithHTML(`<b>${element.name}</b>\n\n` + `Стоимость услуги: ${element.price}\n\n`
-        + `${element.description}\n\n${element.contact}`,
-            Extra.HTML()
-            .markup(Markup.inlineKeyboard([
-                [Markup.callbackButton('➕Посмотреть другие услуги', 'отмена')],
-                [Markup.callbackButton('🔙Вернуться в меню', 'return')],
-            ])))
-    }catch(e){}
+                Extra.load({
+                    caption: `<b>${element.name}</b>\n\n` + `Стоимость услуги: ${element.price}\n\n`
+                    + `${element.description}\n\n<b>${element.contact}</b>`,
+                    parse_mode: 'HTML'
+                }))
+        }catch(e){}}catch(e){}
 }

@@ -10,8 +10,19 @@ const {
 
 const fondScene = require('./scenes/fondScene')
 const newsScene = require('./scenes/newsScene')
-//const productScene = require('./scenes/productScene')
-//const victoryScene = require('./scenes/victoryScene')
+const productScene = require('./scenes/productScene')
+const victoryScene = require('./scenes/victoryScene')
+const adminScene = require('./admin/adminScene')
+const fondSceneA = require('./admin/fondsScene')
+
+const mongoose = require('mongoose')
+
+mongoose.connect(process.env.MONGO_DB_PASS
+    ,{
+    useNewUrlParser: true,
+})
+.then(() => console.log('MongoDb connected'))
+.catch(error => console.log(error))
 
 const TOKEN = process.env.BOT_TOKEN
 const URL = process.env.URL
@@ -29,7 +40,7 @@ bot.use(async (ctx, next) => {
 
 bot.use(session())
 bot.use(stage.middleware())
-stage.register(fondScene, newsScene)
+stage.register(fondScene, newsScene, productScene, victoryScene, adminScene, fondSceneA)
 
 bot.telegram.setWebhook(`${URL}/bot${TOKEN}`)
 
@@ -39,10 +50,8 @@ require('./util/globalCommands')(bot)
 
 bot.action(/fond|vic|prod|news/, async ctx => {
     const callbackQuery = ctx.callbackQuery.data
-    await ctx.reply('enter '+ callbackQuery)
-    if (callbackQuery === 'fond' || callbackQuery === 'news')
-        await ctx.scene.enter(callbackQuery)        
+    await ctx.scene.enter(callbackQuery)        
 })
 
-
+//bot.launch(5000)
 module.exports = bot

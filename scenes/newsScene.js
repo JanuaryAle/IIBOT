@@ -9,6 +9,8 @@ var index
 var list
 var page = 1
 var flag
+var message
+const text = "<b>Вы зашли в раздел Новостной ленты</b>\nЗдесь мы предоставим вам последние актуальные новости по акциям и компаниям📉"
 class NewsSceneGenerator{
     GetNewsScene() {
         const item = new Scene('news')
@@ -20,12 +22,12 @@ class NewsSceneGenerator{
         list = []
         flag = true
         this.printPortion(3, ctx)
-        await ctx.replyWithHTML("<b>📉Вы зашли в раздел Новостной ленты📉</b>", Markup.keyboard(
-            ['🔎Показать более']).resize().extra())
-        await ctx.reply("Здесь мы предоставим вам последние актуальные новости по акциям и компаниям")
-        })
+        message = await ctx.reply(text, Extra.HTML({parse_mode: 'HTML'})
+        .markup(Markup.keyboard(
+            [['🔎Показать больше'], ['/bot']]).resize()))
+        }) 
         
-        item.hears('🔎Показать более', async ctx => {           
+        item.hears('🔎Показать больше', async ctx => {           
             this.show(ctx)
         }) 
 
@@ -35,13 +37,17 @@ class NewsSceneGenerator{
         })
 
         item.action(/vic|prod|fond/, async ctx => {
+            // await ctx.telegram.editMessageReplyMarkup( message.chat.id, message.message_id, undefined,
+            // Extra.HTML().markup(Markup.removeKeyboard()),
+            // )
             const callbackQuery = ctx.callbackQuery.data
-            if (callbackQuery === "fond")
-            await ctx.scene.enter(callbackQuery)
-            else
-            await ctx.scene.leave()     
-        })
+            await ctx.scene.enter(callbackQuery)  
+        }) 
         
+        item.leave(async ctx => {
+            await ctx.reply('Вы покинули раздел новости...', Extra.markup(Markup.removeKeyboard()))
+        })
+
         return item
     }
 

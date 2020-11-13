@@ -4,8 +4,11 @@
   "description": "",
   "main": "index.js",
   "dependencies": {
+    "bcrypt": "^5.0.0",
+    "bcryptjs": "^2.4.3",
     "cheerio": "^1.0.0-rc.3",
     "dotenv": "^8.2.0",
+    "emmiter": "0.0.4",
     "koa": "^2.13.0",
     "koa-bodyparser": "^4.3.0",
     "koa-router": "^10.0.0",

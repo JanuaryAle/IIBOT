@@ -1,6 +1,7 @@
 const Markup = require('telegraf/markup')
 const Extra = require('telegraf/extra')
 const file = require('../info.json')
+const bcrypt = require('bcryptjs')
 
 const help =  `<b>Управлять мной довольно просто:\n\n</b>` 
             + `   ✔️ С помощью команд и кнопок вы всегда найдете нужный раздел\n`
@@ -31,6 +32,19 @@ module.exports = (bot) => {
     })
     
     bot.command('bot', ctx => menuCommand(ctx))
+
+    bot.command('admin', async ctx => {
+        try{
+            let m = ctx.message.text.split(" ")
+            m = m.filter(item => item != "")
+            const password = m[1]
+
+            if (bcrypt.compareSync(password, process.env.ADMIN_PASSWORD))
+                 ctx.scene.enter('admin')
+            else
+            await ctx.reply("У вас нет доступа к данному режиму")
+        }catch(e){}
+      })
 }
 
 async function menuCommand(ctx){
