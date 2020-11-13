@@ -46,32 +46,38 @@ class FondSceneGenerator{
                         clearStack(ctx)
                         flag = false
                         try{
-                            await ctx.replyWithPhoto(file.fondInfo.imageSrc, Extra.load({
+                            ctx.webhookReply = false
+                            stack.push(await ctx.replyWithPhoto(file.fondInfo.imageSrc, Extra.load({
                                 parse_mode: 'HTML',
                                 caption: `<b>${file.fondInfo.name}</b>\n\n${file.fondInfo.description}`
                                 +`\n\n<b>${file.fondInfo.contact}</b>`
-                            }).markup(Markup.inlineKeyboard([Markup.callbackButton('🔙Назад', 'отмена')])))
-                            stack.push(ctx.update)
+                            }).markup(Markup.inlineKeyboard([Markup.callbackButton('🔙Назад', 'отмена')]))))
+                            ctx.webhookReply = true
                         }catch(e){} 
                     }else if (callbackQuery === "ask"){
+                            ctx.webhookReply = false
                             clearStack(ctx)
                             flag = false
-                            await ctx.replyWithHTML("Что бы вы хотели узнать? Отправьте ваш вопрос и наши специалисты напишут вам в ближайшее время", Extra.HTML().markup(Markup.inlineKeyboard([[Markup.callbackButton('🔙Назад', 'отмена')]])))
-                            stack.push(ctx.update)
+                            stack.push(await ctx.replyWithHTML("Что бы вы хотели узнать? Отправьте ваш вопрос и наши специалисты напишут вам в ближайшее время", Extra.HTML().markup(Markup.inlineKeyboard([[Markup.callbackButton('🔙Назад', 'отмена')]]))))
+                            
+                            ctx.webhookReply = true
                     }
                     else if (callbackQuery === "ques"){
+                        ctx.webhookReply = false
                         clearStack(ctx)
                         flag = false
-                        await ctx.replyWithHTML("<b>Ниже представлен список часто задаваемых вопросов</b>\nКликните, чтобы увидеть ответ", Extra.HTML().markup(Markup.inlineKeyboard(convertKeyboard(answers.values))))
-                        stack.push(ctx.update)
+                        stack.push(await ctx.replyWithHTML("<b>Ниже представлен список часто задаваемых вопросов</b>\nКликните, чтобы увидеть ответ", Extra.HTML().markup(Markup.inlineKeyboard(convertKeyboard(answers.values)))))   
+                        ctx.webhookReply = true
                     }else{
                         try {
                             var index = parseInt(callbackQuery)
                             if (index != NaN){
+                                ctx.webhookReply = false
                                 flag = false
                                 const element = answers.values[+(ctx.callbackQuery.data)]
                                 await ctx.replyWithHTML(`<b>Вопрос:</b>\n${element.question}\n\n<b>Ответ:</b>\n${element.answer}`)
                                 stack.push(ctx.update)
+                                ctx.webhookReply = true
                             }
                         }catch(e){} 
                     }
