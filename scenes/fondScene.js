@@ -117,6 +117,7 @@ async function startPoint(ctx){
 }
 
 function clearStack(ctx){
+    
     stack.forEach(item => {
         ctx.telegram.deleteMessage(item.chat.id, item.message_id)
     })
