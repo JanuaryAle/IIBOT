@@ -18,9 +18,14 @@ const app = new Koa()
 
 const router = Router()
 
-app.use((ctx, next) => ctx.method === 'POST' || ctx.url === `/bot${TOKEN}` ?
-          bot.handleUpdate(ctx.request.body, ctx.response) :
-          next())
+let webHookCallback = telegraf.webhookCallback(`/bot${TOKEN}`);
+router.post(`/bot${TOKEN}`, createExpressCallback(webHookCallback));
+
+// router.post(`/bot${TOKEN}`, async ctx => {
+//     console.log(ctx)
+//     await bot.handleUpdate(ctx.request.body, ctx.response)  // Наконец-то, эта штука задана правилно и бот реагирует
+//     ctx.status = 200
+// })
 
 router.get(`/`, ctx => {    // Все ок, сервер работает
     ctx.status = 200
@@ -31,6 +36,15 @@ router.get(`/`, ctx => {    // Все ок, сервер работает
 app.use(bodyParser())
 app.use(router.routes())
 
+
 app.listen(PORT, () => {
     console.log(`Listening on ${PORT}`)
 })
+
+function createExpressCallback (webHookCallback)
+{
+  return (request, response) =>
+  {
+    webHookCallback(request, response);
+  };
+};
