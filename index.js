@@ -18,7 +18,7 @@ const app = new Koa()
 
 const router = Router()
 
-let webHookCallback = telegraf.webhookCallback(`/bot${TOKEN}`);
+let webHookCallback = bot.webhookCallback(`/bot${TOKEN}`);
 router.post(`/bot${TOKEN}`, createExpressCallback(webHookCallback));
 
 // router.post(`/bot${TOKEN}`, async ctx => {
