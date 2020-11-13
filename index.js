@@ -18,8 +18,9 @@ const app = new Koa()
 
 const router = Router()
 
-router.post(`/bot${TOKEN}`, async ctx => {
-    console.log(ctx)
+router.post(`/bot${TOKEN}`, async (ctx, a) => {
+    console.log("ctx  " + ctx)
+    console.log("a  " + a)
     await bot.handleUpdate(ctx.request.body, ctx.response)  // Наконец-то, эта штука задана правилно и бот реагирует
     ctx.status = 200
 })
