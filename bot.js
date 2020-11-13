@@ -46,7 +46,6 @@ bot.telegram.setWebhook(`${URL}/bot${TOKEN}`)
 
 require('./util/globalCommands')(bot)
 
-//sbot.on('text', ctx => { ctx.reply('i hear u')})
 
 bot.action(/fond|vic|prod|news/, async ctx => {
     const callbackQuery = ctx.callbackQuery.data
