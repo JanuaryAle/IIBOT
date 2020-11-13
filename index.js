@@ -23,18 +23,16 @@ router.get(`/`, ctx => {    // Все ок, сервер работает
 })
 
 // Ставим мидлы
-router.use(bot.webhookCallback(`/bot${TOKEN}`))
+app.use(bot.webhookCallback(`/bot${TOKEN}`))
 
 app.use(bodyParser())
 app.use(router.routes())
 
-
-
-// router.post(`/bot${TOKEN}`, async (ctx) => {
-//     console.log(ctx)
-//     await bot.handleUpdate(ctx.request.body, ctx.response)  // Наконец-то, эта штука задана правилно и бот реагирует
-//     ctx.status = 200
-// })
+app.post(`/bot${TOKEN}`, async (ctx) => {
+    console.log(ctx)
+    await bot.handleUpdate(ctx.request.body, ctx.response)  // Наконец-то, эта штука задана правилно и бот реагирует
+    ctx.status = 200
+})
 
 app.listen(PORT, () => {
     console.log(`Listening on ${PORT}`)
