@@ -36,6 +36,7 @@ bot.use(async (ctx, next) => {
     await next()
     const response_time = new Date() - start
     console.log(`(Response Time: ${response_time})`)
+    console.log(`(Response Time: ${ctx})`)
   })
 
 bot.use(session())
@@ -45,7 +46,6 @@ stage.register(fondScene, newsScene, productScene, victoryScene, adminScene, fon
 bot.telegram.setWebhook(`${URL}/bot${TOKEN}`)
 
 require('./util/globalCommands')(bot)
-
 
 bot.action(/fond|vic|prod|news/, async ctx => {
     const callbackQuery = ctx.callbackQuery.data
