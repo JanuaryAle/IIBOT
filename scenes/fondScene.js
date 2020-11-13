@@ -129,8 +129,10 @@ async function startPoint(ctx){
 function clearStack(ctx){
     
     stack.forEach((item, i) => {
-            console.log(`\n\n${i}:\n${JSON.stringify(item)}`)
-            ctx.telegram.deleteMessage(item.chat.id, item.message_id)
+            if (item.message_id){
+                console.log(`\n\n${i}:\n${JSON.stringify(item)}`)
+                ctx.telegram.deleteMessage(item.chat.id, item.message_id)
+            }
     })
     stack = []
 }
