@@ -107,10 +107,8 @@ function convertButtons(options)
 function clearStack(ctx){
     
     stack.forEach(item => {
-
-        console.log(JSON.stringify(item.request.body))
-       // ctx.telegram.deleteMessage(item.chat.id, item.message_id)
+        ctx.telegram.deleteMessage(item.chat.id, item.message_id)
     })
 
-    //stack = []
+    stack = []
 }

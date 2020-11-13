@@ -21,10 +21,6 @@ class FondSceneGenerator{
             startPoint(ctx)
         }, async ctx => {
             try{
-                console.log("1: ")
-                for(key in ctx){
-                    console.log(key + ": " + ctx[key])
-                }
                 if (typeof ctx.message !== "undefined" && callbackQuery === "ask"){
                     try{
                         console.log(ctx)
@@ -106,10 +102,6 @@ module.exports = new FondSceneGenerator().GetFondStage()
 }
 
 async function startPoint(ctx){
-    console.log("startPoint: ")
-    for(key in ctx){
-        console.log(key + ": " + ctx[key])
-    }
     flag = true
     callbackQuery = ''
     await ctx.replyWithHTML(`<b>Добро пожаловать в раздел нашего фонда, ${file.fondInfo.name}</b>\n`
@@ -121,20 +113,23 @@ async function startPoint(ctx){
         [Markup.callbackButton('🗄Список возможных вопросов', 'ques')],
         [Markup.callbackButton('📝Задайте вопрос', 'ask')]
         ])))
-        console.log("startPointend: ")
-        for(key in ctx){
-            console.log(key + ": " + ctx[key])
-        }
         return ctx.wizard.selectStep(1)
 }
 
 function clearStack(ctx){
+    console.log(ctx)
+    for (key in ctx){
+        console.log(key+ "  :  " + ctx[key])
+    }
+    console.log(JSON.stringify(ctx.update))
     
     stack.forEach(item => {
+        for (key in item){
+            console.log(key+ "  :  " + ctx[key])
+        }
 
-        console.log(JSON.stringify(item))
-       // ctx.telegram.deleteMessage(item.chat.id, item.message_id)
+    //    ctx.telegram.deleteMessage(item.chat.id, item.message_id)
     })
 
-    //stack = []
+    stack = []
 }
