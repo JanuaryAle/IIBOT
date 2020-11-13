@@ -32,11 +32,13 @@ class VictorySceneGenerator{
                                     inline_keyboard: [[
                                         {text: 'Готово/Отменить', callback_data: `stop_poll`}
                                     ]]})
+                                ctx.webhookReply = false
                                 stack.push(await ctx.replyWithPoll(
                                     element.poll.question,
                                     convertButtons(element.poll.options),
                                     deepClone
                                 ))
+                                ctx.webhookReply = true
                                 return ctx.wizard.next()
                             }
                         }catch(e){}
@@ -54,9 +56,8 @@ class VictorySceneGenerator{
                 })
 
                 item.action(/art#(.+)/, async ctx => {
-                    
+                    ctx.webhookReply = false
                     const name = ctx.callbackQuery.data.split('#')[1]
-                    console.log(name)
                     element = victoryList.filter(item => item.title === name)[0]
                     if (typeof element !== "undefined") {
                         clearStack(ctx)
@@ -69,7 +70,8 @@ class VictorySceneGenerator{
                             [Markup.callbackButton('✏️Пройти тестирование', 'test')],
                         ]))))
                         return await ctx.wizard.selectStep(1)
-                    }   
+                    } 
+                    ctx.webhookReply = true  
                 })
                     
         return item  
@@ -82,7 +84,6 @@ async function convertListToMarkup(){
     victoryList.forEach((element, i) => {
         keyboard.push([Markup.callbackButton(element.title, `art#${element.title}`)])
     });
-   // keyboard.push([Markup.callbackButton('Вернуться к списку статей', 'return')])
     return keyboard
 }
 
@@ -104,11 +105,13 @@ function convertButtons(options)
     });
     return keyboard
 }
+
 function clearStack(ctx){
     
-    stack.forEach(item => {
-        ctx.telegram.deleteMessage(item.chat.id, item.message_id)
+    stack.forEach((item, i) => {
+            if (item.message_id){
+                ctx.telegram.deleteMessage(item.chat.id, item.message_id)
+            }
     })
-
     stack = []
 }

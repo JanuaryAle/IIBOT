@@ -2,6 +2,7 @@ const Markup = require('telegraf/markup')
 const Extra = require('telegraf/extra')
 const WizardScene = require('telegraf/scenes/wizard')
 const bot = require('../bot')
+require('dotenv').config()
 
 const fileNameAnswers = '../answers.json'
 const answers =  require(fileNameAnswers)
@@ -11,6 +12,8 @@ const file = require(fileName)
 let flag = false
 let callbackQuery
 let stack = []
+
+const CHAT_ID = process.env.CALLBACK_CHAT
 
 class FondSceneGenerator{
 
@@ -32,34 +35,38 @@ class FondSceneGenerator{
                             userId: ctx.from.id,
                             userFirstName: ctx.from.first_name
                         }
-                        await ctx.telegram.sendMessage(858239527,
+                        await ctx.telegram.sendMessage(CHAT_ID,
                         `❓❓❓ Вам только что поступил вопрос от пользователя <a href="tg://user?id=${question.userId}">${question.userFirstName}</a>: \n${question.message}`,
                         Extra.HTML())
                         await ctx.reply("Ваше обращение успешно отправлено!")
-                        stack = []
+                        clearStack(ctx)
                         startPoint(ctx)
                     }catch(e){}
                 }else if (typeof ctx.callbackQuery !== "undefined"){
                 
                     callbackQuery = ctx.callbackQuery.data
                     if (callbackQuery === 'more'){
+                        ctx.webhookReply = false
                         clearStack(ctx)
                         flag = false
-                        try{
-                            ctx.webhookReply = false
+                        try{             
                             stack.push(await ctx.replyWithPhoto(file.fondInfo.imageSrc, Extra.load({
                                 parse_mode: 'HTML',
                                 caption: `<b>${file.fondInfo.name}</b>\n\n${file.fondInfo.description}`
                                 +`\n\n<b>${file.fondInfo.contact}</b>`
+                            }).markup(Markup.inlineKeyboard([Markup.callbackButton('🔙Назад', 'отмена')]))))                          
+                        }catch(e){
+                            stack.push(await ctx.replyWithHTML(`<b>${file.fondInfo.name}</b>\n\n${file.fondInfo.description}`
+                            +`\n\n<b>${file.fondInfo.contact}</b>`, Extra.load({
+                                parse_mode: 'HTML'
                             }).markup(Markup.inlineKeyboard([Markup.callbackButton('🔙Назад', 'отмена')]))))
-                            ctx.webhookReply = true
-                        }catch(e){} 
+                        } 
+                        ctx.webhookReply = true
                     }else if (callbackQuery === "ask"){
                             ctx.webhookReply = false
                             clearStack(ctx)
                             flag = false
-                            stack.push(await ctx.replyWithHTML("Что бы вы хотели узнать? Отправьте ваш вопрос и наши специалисты напишут вам в ближайшее время", Extra.HTML().markup(Markup.inlineKeyboard([[Markup.callbackButton('🔙Назад', 'отмена')]]))))
-                            
+                            stack.push(await ctx.replyWithHTML("Что бы вы хотели узнать? Отправьте ваш вопрос и наши специалисты напишут вам в ближайшее время", Extra.HTML().markup(Markup.inlineKeyboard([[Markup.callbackButton('🔙Назад', 'отмена')]]))))                           
                             ctx.webhookReply = true
                     }
                     else if (callbackQuery === "ques"){
@@ -129,7 +136,6 @@ function clearStack(ctx){
     
     stack.forEach((item, i) => {
             if (item.message_id){
-                console.log(`\n\n${i}:\n${JSON.stringify(item)}`)
                 ctx.telegram.deleteMessage(item.chat.id, item.message_id)
             }
     })
