@@ -104,7 +104,7 @@ module.exports = new FondSceneGenerator().GetFondStage()
 async function startPoint(ctx){
     flag = true
     callbackQuery = ''
-    await ctx.replyWithHTML(`<b>Добро пожаловать в раздел нашего фонда, ${file.fondInfo.name}</b>\n`
+    console.log(await ctx.replyWithHTML(`<b>Добро пожаловать в раздел нашего фонда, ${file.fondInfo.name}</b>\n`
     + `Здесь мы расскажем вам о себе и будем рады услышать ваши вопросы.\n`
     + `Желаете получить оперативный ответ?\n🚀 Возможно, мы уже подготовили его в списке часто задаваемых вопросов😄\n`,
     Extra.HTML()
@@ -112,7 +112,7 @@ async function startPoint(ctx){
         [Markup.callbackButton('🙋‍♀️Давайте знакомиться', `more`)],
         [Markup.callbackButton('🗄Список возможных вопросов', 'ques')],
         [Markup.callbackButton('📝Задайте вопрос', 'ask')]
-        ])))
+        ]))))
         return ctx.wizard.selectStep(1)
 }
 
