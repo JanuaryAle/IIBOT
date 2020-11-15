@@ -4,9 +4,9 @@ const WizardScene = require('telegraf/scenes/wizard')
 const bot = require('../bot')
 require('dotenv').config()
 
-const fileNameAnswers = '../answers.json'
+const fileNameAnswers = '../data/answers.json'
 const answers =  require(fileNameAnswers)
-const fileName = '../info.json'
+const fileName = '../data/info.json'
 const file = require(fileName)
 
 let flag = false
@@ -86,7 +86,7 @@ class FondSceneGenerator{
                             }
                         }catch(e){} 
                     }
-                }}catch(e){}
+                }}catch(e){console.log(e)}
             })
 
         require('../util/globalCommands')(item)

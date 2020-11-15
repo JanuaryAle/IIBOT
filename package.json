@@ -22,8 +22,9 @@
   },
   "devDependencies": {},
   "scripts": {
-    "start": "nodemon index"
+    "start": "node index"
   },
+
   "author": "",
   "license": "ISC"
 }

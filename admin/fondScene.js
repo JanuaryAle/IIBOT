@@ -3,9 +3,9 @@ const WizardScene = require('telegraf/scenes/wizard')
 const Markup = require('telegraf/markup')
 const Extra = require('telegraf/extra');
 
-const fileName = '../info.json'
+const fileName = '../data/info.json'
 const file = require(fileName)
-const fileNameAnswers = '../answers.json'
+const fileNameAnswers = '../data/answers.json'
 const answers = require(fileNameAnswers)
 
 let stack = []
@@ -57,7 +57,7 @@ class FondSceneGenerator{
             try{
                 if (typeof ctx.callbackQuery !== "undefined"){
                     callbackQuery = ctx.callbackQuery.data
-
+                    console.log("in callback")
                     if (callbackQuery === "отмена"){
                         abort(ctx)
                     }else if(callbackQuery === "удалить"){
@@ -71,7 +71,7 @@ class FondSceneGenerator{
                         clearStack(ctx)
                         element = {}
                         ctx.webhookReply = false
-                        stack.push(await ctx.editMessageText("Введите вопрос: ", Extra.HTML().markup(Markup.inlineKeyboard([Markup.callbackButton('✖️Отмена','отмена')]))))
+                        stack.push(await ctx.replyWithHTML("Введите вопрос: ", Extra.HTML().markup(Markup.inlineKeyboard([Markup.callbackButton('✖️Отмена','отмена')]))))
                         ctx.webhookReply = true
                     }else if(callbackQuery === "вопросы и ответы"){
                         clearStack(ctx)
@@ -87,11 +87,13 @@ class FondSceneGenerator{
                         ctx.webhookReply = true
                     }else if(!isNaN(+callbackQuery)){
                         ctx.webhookReply = false
-                        element = answers.values[+(data)]
+                        element = answers.values[+(callbackQuery)]
                         stack.push(await ctx.editMessageText(`Вопрос:\n${element.question}\n\nОтвет:\n${element.answer}`, Extra.HTML().markup(Markup.inlineKeyboard([Markup.callbackButton('🗑Удалить', 'удалить'), Markup.callbackButton('Отмена', 'отмена')]))))
                         ctx.webhookReply = true
                     }
+
                 }else if (typeof ctx.message !== "undefined" && typeof ctx.message.text !== "undefined"){
+                    console.log("in text")
                     const replace = ctx.message.text
                     if (callbackQuery !== ""){
                         clearStack(ctx)
@@ -116,14 +118,15 @@ class FondSceneGenerator{
                                 isAnsw = true
                                 element.id = answers.values[answers.values.length - 1].id + 1
                                 answers.values.push(element)
-                                await fs.writeFileSync("answers.json", `${JSON.stringify(answers)}`);
+                                await fs.writeFileSync("data/answers.json", `${JSON.stringify(answers)}`);
                                 await ctx.reply("Элемент добавлен")
                                 abort(ctx)
                             }
                         }
                     }
+                }else {
+                    ctx.reply("Что-то пошло не так, пожалуйста, повторите операцию")
                 }
-
             }catch(e){
                 console.log(e)
             }
@@ -131,7 +134,7 @@ class FondSceneGenerator{
 
         require('../util/globalCommands')(item)
         //Добааааавь
-        item.action(/vic|news/, async ctx => {
+        item.action(/vic$|news$|fond$/, async ctx => {
             console.log("fondRed was leaved")
             const callbackQuery = ctx.callbackQuery.data
             await ctx.scene.enter(callbackQuery)       
@@ -145,10 +148,11 @@ module.exports = new FondSceneGenerator().GetFondStage()
 
 async function updateInfo(ctx){
     try{
-        await fs.writeFileSync("info.json", `${JSON.stringify(file)}`);
-        await ctx.reply("Изменения прошли успешно")
-        editMessage(ctx)
-        abort(ctx)
+         await fs.writeFileSync("data/info.json", `${JSON.stringify(file)}`);
+         await ctx.reply("Изменения прошли успешно")
+         clearStack(ctx)
+         editMessage(ctx)
+        // ctx.scene.enter('redFond')
     } catch(e){console.log(e)}
 } 
 

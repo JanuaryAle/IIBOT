@@ -1,6 +1,6 @@
 const Markup = require('telegraf/markup')
 const Extra = require('telegraf/extra')
-const file = require('../info.json')
+const file = require('../data/info.json')
 const bcrypt = require('bcryptjs')
 
 const help =  `<b>Управлять мной довольно просто:\n\n</b>` 

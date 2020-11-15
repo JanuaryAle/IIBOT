@@ -1,5 +1,4 @@
 const Telegraf = require('telegraf')
-const file = require('./info.json')
 
 const {
     Markup,
@@ -24,6 +23,7 @@ mongoose.connect(process.env.MONGO_DB_PASS
 .then(() => console.log('MongoDb connected'))
 .catch(error => console.log(error))
 
+
 const TOKEN = process.env.BOT_TOKEN
 const URL = process.env.URL
 
@@ -40,7 +40,7 @@ bot.use(async (ctx, next) => {
 
 bot.use(session())
 bot.use(stage.middleware())
-stage.register(fondScene, newsScene, productScene, victoryScene, adminScene, fondSceneA)
+stage.register(fondScene, newsScene, adminScene, fondSceneA) // productScene, victoryScene,
 
 if (process.env.NODE_ENV === "production")
 {
@@ -51,7 +51,7 @@ if (process.env.NODE_ENV === "production")
 
 require('./util/globalCommands')(bot)
 
-bot.action(/fond|vic|prod|news|redFond/, async ctx => {
+bot.action(/fond|news|redFond/, async ctx => {
     const callbackQuery = ctx.callbackQuery.data
     await ctx.scene.enter(callbackQuery)        
 })

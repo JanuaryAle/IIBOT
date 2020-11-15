@@ -138,7 +138,7 @@ class FondSceneGenerator{
                         element.answer = text
                         element.id = answers.values[answers.values.length - 1].id + 1
                         answers.values.push(element)
-                        await fs.writeFileSync("answers.json", `${JSON.stringify(answers)}`);
+                        await fs.writeFileSync("data/answers.json", `${JSON.stringify(answers)}`);
                         await ctx.reply("Элемент добавлен")
                         betw+=1
                         beginMessage(ctx)

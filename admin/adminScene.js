@@ -17,7 +17,7 @@ class AdminMode{
             ])))            
         })
 
-        item.action(/vic|fond|news|redFond/, async ctx => {
+        item.action(/redFond/, async ctx => {
             const callbackQuery = ctx.callbackQuery.data
             console.log(callbackQuery)
             await ctx.scene.enter(callbackQuery)       
