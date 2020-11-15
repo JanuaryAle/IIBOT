@@ -17,7 +17,10 @@ class VictorySceneGenerator{
                 const promise = query.getAll()
                 promise.then( async (data) =>{
                         victoryList = data
+                        ctx.webhookReply = false
                         getBeginMes(ctx)
+                        console.log(ctx)
+                        ctx.webhookReply = true
                         return ctx.wizard.next()
                     })                    
                     }, async (ctx) => {

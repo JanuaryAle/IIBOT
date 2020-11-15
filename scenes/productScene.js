@@ -17,9 +17,13 @@ class ProductSceneGenerator{
             promise.then(async (data) =>{
                 prodList = data
                 ctx.webhookReply = false
-                console.log(await ctx.replyWithHTML(`<b>Вы перешли в раздел наших услуг</b>\nЧтобы узнать подробнее об услуге, выберете ее из списка ниже`,
+                await ctx.replyWithHTML(`<b>Вы перешли в раздел наших услуг</b>\n`
+                + `Мы любим нашу работу и вкладываем душу в разработку представленных ниже продуктов.`
+                + ` Каждый их них мы используем и для себя, поэтому гарантируем высокий уровень надежности\n`
+                + `Узнайте подробнее про услугу, кликнув на нее, и если захотите, то напишите нам ваши впечатления или сделайте заказ.\т`
+                + `Мы предоставим вам контакты✨`,
                 Extra.HTML({parse_mode: 'HTML'})
-                .markup(Markup.inlineKeyboard(convertListToMarkup()))))               
+                .markup(Markup.inlineKeyboard(convertListToMarkup())))              
                 ctx.webhookReply = false
                 return ctx.wizard.next()
             }).catch( err => console.log(err))
@@ -57,7 +61,7 @@ function convertListToMarkup(){
 
 async function replyProduct(ctx){
     try{
-
+        ctx.webhookReply = false
         try{
             await ctx.replyWithPhoto(element.imageSrc,
                 Extra.load({
@@ -66,4 +70,5 @@ async function replyProduct(ctx){
                     parse_mode: 'HTML'
                 }))
         }catch(e){}}catch(e){}
+        ctx.webhookReply = true
 }
