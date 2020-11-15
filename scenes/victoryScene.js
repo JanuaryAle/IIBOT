@@ -23,8 +23,7 @@ class VictorySceneGenerator{
                         + `❓ В конце каждой вы можете проверить свои знания\n`
                         + `❓ Нажмите на название, чтобы приступить к прочтению`, 
                         Extra.HTML({parse_mode: 'HTML'})
-                        .markup(Markup.inlineKeyboard(await convertListToMarkup()))))
-                        
+                        .markup(Markup.inlineKeyboard(await convertListToMarkup()))))                      
                         ctx.webhookReply = true
                         return ctx.wizard.next()
                     })                    
@@ -47,7 +46,6 @@ class VictorySceneGenerator{
                                     deepClone
                                 ))
                                 ctx.webhookReply = true
-                                return ctx.wizard.next()
                             }
                         }catch(e){}
                     }
@@ -80,8 +78,7 @@ class VictorySceneGenerator{
                         .markup(Markup.inlineKeyboard([
                             [Markup.callbackButton('✏️Пройти тестирование', 'test')],
                         ]))))
-                        ctx.webhookReply = true  
-                        return await ctx.wizard.selectStep(1)
+                        ctx.webhookReply = true 
                     }                  
                 })
                     
@@ -96,16 +93,6 @@ async function convertListToMarkup(){
         keyboard.push([Markup.callbackButton(element.title, `art#${element.title}`)])
     });
     return keyboard
-}
-
-async function getBeginMes(ctx)
-{
-    stack = []
-    await ctx.replyWithHTML(`<b>Вот вы и в разделе обучения!</b>\n\nНиже для вас представлен список статей🎲\n`
-    + `❓ В конце каждой вы можете проверить свои знания\n`
-    + `❓ Нажмите на название, чтобы приступить к прочтению`, 
-    Extra.HTML({parse_mode: 'HTML'})
-    .markup(Markup.inlineKeyboard(await convertListToMarkup())))
 }
 
 function convertButtons(options)

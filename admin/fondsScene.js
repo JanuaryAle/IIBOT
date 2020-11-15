@@ -114,7 +114,8 @@ class FondSceneGenerator{
         }, async ctx => {
             try{
                 if (typeof ctx.callbackQuery !== "undefined" && ctx.callbackQuery.data === 'отмена'){
-                    return beginMessage(ctx)
+                    beginMessage(ctx)
+                    return await ctx.wizard.selectStep(1)
                 } 
                 if (typeof ctx.message !== "undefined"){
                     const text = ctx.message.text
@@ -156,7 +157,6 @@ class FondSceneGenerator{
                 await fs.writeFileSync("answers.json", `${JSON.stringify(answers)}`);
                 betw+=1
                 await ctx.replyWithHTML("Элемент удален")
-                
             }catch(e){}
         })
 
