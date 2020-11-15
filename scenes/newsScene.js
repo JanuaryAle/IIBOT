@@ -11,6 +11,7 @@ var page = 1
 var flag
 var message
 const text = "<b>Вы зашли в раздел Новостной ленты</b>\nЗдесь мы предоставим вам последние актуальные новости по акциям и компаниям📉"
+
 class NewsSceneGenerator{
     GetNewsScene() {
         const item = new Scene('news')
@@ -37,9 +38,6 @@ class NewsSceneGenerator{
         })
 
         item.action(/vic|prod|fond/, async ctx => {
-            // await ctx.telegram.editMessageReplyMarkup( message.chat.id, message.message_id, undefined,
-            // Extra.HTML().markup(Markup.removeKeyboard()),
-            // )
             const callbackQuery = ctx.callbackQuery.data
             await ctx.scene.enter(callbackQuery)  
         }) 

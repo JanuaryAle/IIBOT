@@ -14,13 +14,15 @@ class ProductSceneGenerator{
     GetProductsScene() {
         const item = new WizardScene('prod', 
         async (ctx) => {
+            console.log("on fond ok")
             const promise = query.getAll()
             promise.then(async (data) =>{
                 prodList = data
                 flag = false
                 replyBeginMes(ctx)
                 return ctx.wizard.next()
-            })
+            }).catch( err => console.log(err))
+          
         }, async ctx => {
             try{
                 if (typeof ctx.callbackQuery !== "undefined"){
