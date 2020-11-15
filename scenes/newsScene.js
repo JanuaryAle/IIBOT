@@ -1,9 +1,7 @@
 const Scene = require('telegraf/scenes/base')
 const Markup = require('telegraf/markup')
 const Extra = require('telegraf/extra')
-const { keyboard } = require('telegraf/markup')
 const GetNewsList = require('../util/parser')
-const { load } = require('telegraf/extra')
 
 var index
 var list
@@ -54,7 +52,7 @@ class NewsSceneGenerator{
     }
 
     async printPortion(k, ctx){
-        while (k > 0 && index < list.length) 
+        while (k > 0 && index < list.length && flag) 
         {
             const element = list[index]
             const readMore = `<a href="${element.href}">Посмотрите в источнике</a>`

@@ -27,16 +27,21 @@ let keyboardIn = Extra.HTML()
 async function beginMessage(ctx){
     clearStack(ctx)
     if (betw >= 2 || flag){
+        ctx.webhookReply = false
         begMes = await ctx.replyWithHTML( `🏛 Информация о фонде\n\n📝 Изображение: ${file.fondInfo.imageSrc}\n\n📝 Описание: ${file.fondInfo.description}\n\n📝 Контакт: ${file.fondInfo.contact}\n\n Что бы вы хотели изменить?`,
         keyboardIn)
         betw = 0
+        ctx.webhookReply = true
     }else {
         try{
-        await ctx.telegram.editMessageText(begMes.chat.id, begMes.message_id, undefined,
-             `🏛 Информация о фонде\n\n📝 Изображение: ${file.fondInfo.imageSrc}\n\n📝`
-             + ` Описание: ${file.fondInfo.description}\n\n📝 Контакт: ${file.fondInfo.contact}\n\n Что бы вы хотели изменить?`,
-            keyboardIn)
-        }catch(e){}
+            ctx.webhookReply = false
+            await ctx.telegram.editMessageText(begMes.chat.id, begMes.message_id, undefined,
+                `🏛 Информация о фонде\n\n📝 Изображение: ${file.fondInfo.imageSrc}\n\n📝`
+                + ` Описание: ${file.fondInfo.description}\n\n📝 Контакт: ${file.fondInfo.contact}\n\n Что бы вы хотели изменить?`,
+                keyboardIn)
+            }finally{
+                ctx.webhookReply = true
+            }
     }
     return await ctx.wizard.selectStep(1)
 }
@@ -53,11 +58,14 @@ class FondSceneGenerator{
         },async ctx => {
             if (typeof ctx.callbackQuery !== "undefined"){
                 callbackQuery = ctx.callbackQuery.data
+                ctx.webhookReply = false
                 if (callbackQuery === "контактам" || callbackQuery === "изображению"|| callbackQuery === "описанию"){                   
                     stack.push(await ctx.reply(`Введите замену ${callbackQuery}`, Extra.HTML().markup(Markup.inlineKeyboard([Markup.callbackButton('✖️Отмена', 'отмена')]))))
+                    ctx.webhookReply = true
                     return ctx.wizard.next() 
                 }else if (callbackQuery === "вопросы и ответы"){ 
                     stack.push(await ctx.replyWithHTML("Список вопросов и ответов", Extra.HTML().markup(Markup.inlineKeyboard(convertKeyboard(answers.values)))))
+                    ctx.webhookReply = true
                     return ctx.wizard.selectStep(3)
             }}
         }, async ctx => {
@@ -83,11 +91,15 @@ class FondSceneGenerator{
                     var data = ctx.callbackQuery.data
                     if (data === "add"){
                         element = {}
+                        ctx.webhookReply = false
                         stack.push(await ctx.editMessageText("Введите вопрос: ", Extra.HTML().markup(Markup.inlineKeyboard([Markup.callbackButton('✖️Отмена','отмена')]))))
+                        ctx.webhookReply = true
                         return await ctx.wizard.next()
                     }else if (!isNaN(+(data))){
+                        ctx.webhookReply = false
                         element = answers.values[+(data)]
                         stack.push(await ctx.editMessageText(`Вопрос:\n${element.question}\n\nОтвет:\n${element.answer}`, Extra.HTML().markup(Markup.inlineKeyboard([Markup.callbackButton('🗑Удалить', 'удалить'), Markup.callbackButton('Отмена', 'отмена')]))))
+                        ctx.webhookReply = true
                 }}
             }catch(e){console.log(e)}
         }, async ctx => {
@@ -96,7 +108,9 @@ class FondSceneGenerator{
                     const text = ctx.message.text
                     if (typeof text !== 'undefined'){
                         element.question = text
+                        ctx.webhookReply = false
                         stack.push(await ctx.reply("Введите ответ: ", Extra.HTML().markup(Markup.inlineKeyboard([Markup.callbackButton('✖️Отмена','отмена')]))))
+                        ctx.webhookReply = true
                         return ctx.wizard.next()}
             }}catch(e){console.log(e)}
         }, async ctx => {
