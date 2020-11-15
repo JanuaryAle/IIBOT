@@ -24,15 +24,15 @@ class FondSceneGenerator{
             startPoint(ctx)
         }, async ctx => {
             try{
-                if (typeof ctx.message !== "undefined" && callbackQuery === "ask"){
+                if (typeof ctx.update.message !== "undefined" && callbackQuery === "ask"){
                     try{
                         const question = {
-                            chat_id: ctx.update.chat.id,
+                            chat_id: ctx.update.message.chat.id,
                             message_id: ctx.update.message.message_id,
-                            username: ctx.update.chat.username,
+                            username: ctx.update.message.chat.username,
                             message: ctx.update.message.text,
-                            userId: ctx.update.from.id,
-                            userFirstName: ctx.update.from.first_name
+                            userId: ctx.update.message.from.id,
+                            userFirstName: ctx.update.message.from.first_name
                         }
                         await ctx.telegram.sendMessage(CHAT_ID,
                         `❓❓❓ Вам только что поступил вопрос от пользователя <a href="tg://user?id=${question.userId}">${question.userFirstName}</a>: \n${question.message}`,
