@@ -26,24 +26,21 @@ class FondSceneGenerator{
             try{
                 if (typeof ctx.message !== "undefined" && callbackQuery === "ask"){
                     try{
-                        ctx.webhookReply = false
-                        console.log(ctx)
                         const question = {
-                            chat_id: ctx.chat.id,
-                            message_id: ctx.message.message_id,
-                            username: ctx.chat.username,
-                            message: ctx.message.text,
-                            userId: ctx.from.id,
-                            userFirstName: ctx.from.first_name
+                            chat_id: ctx.update.chat.id,
+                            message_id: ctx.update.message.message_id,
+                            username: ctx.update.chat.username,
+                            message: ctx.update.message.text,
+                            userId: ctx.update.from.id,
+                            userFirstName: ctx.update.from.first_name
                         }
                         await ctx.telegram.sendMessage(CHAT_ID,
                         `❓❓❓ Вам только что поступил вопрос от пользователя <a href="tg://user?id=${question.userId}">${question.userFirstName}</a>: \n${question.message}`,
                         Extra.HTML())
                         await ctx.reply("Ваше обращение успешно отправлено!")
                         clearStack(ctx)
-                        ctx.webhookReply = true
                         //startPoint(ctx)
-                    }catch(e){}
+                    }catch(e){console.log(e)}
                 }else if (typeof ctx.callbackQuery !== "undefined"){
                 
                     callbackQuery = ctx.callbackQuery.data
