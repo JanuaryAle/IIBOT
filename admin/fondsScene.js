@@ -43,7 +43,7 @@ async function beginMessage(ctx){
                 ctx.webhookReply = true
             }
     }
-    return await ctx.wizard.selectStep(1)
+    await ctx.wizard.selectStep(1)
 }
 
 class FondSceneGenerator{
