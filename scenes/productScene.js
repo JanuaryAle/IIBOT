@@ -4,9 +4,7 @@ const Extra = require('telegraf/extra')
 const { keyboard } = require('telegraf/markup')
 const query = require('../queries/queryProduct')
 
-var flag = false
 var prodList 
-var index
 var element
 
 class ProductSceneGenerator{
@@ -18,9 +16,11 @@ class ProductSceneGenerator{
             const promise = query.getAll()
             promise.then(async (data) =>{
                 prodList = data
-                console.log(prodList)
-                flag = false
-                replyBeginMes(ctx)
+                ctx.webhookReply = false
+                console.log(await ctx.replyWithHTML(`<b>Вы перешли в раздел наших услуг</b>\nЧтобы узнать подробнее об услуге, выберете ее из списка ниже`,
+                Extra.HTML({parse_mode: 'HTML'})
+                .markup(Markup.inlineKeyboard(convertListToMarkup()))))               
+                ctx.webhookReply = false
                 return ctx.wizard.next()
             }).catch( err => console.log(err))
           
@@ -47,16 +47,6 @@ class ProductSceneGenerator{
 
 module.exports = new ProductSceneGenerator().GetProductsScene()
 
-async function replyBeginMes(ctx)
-{
-    if (!flag){
-        await ctx.replyWithHTML(`<b>Вы перешли в раздел наших услуг</b>\nЧтобы узнать подробнее об услуге, выберете ее из списка ниже`,
-        Extra.HTML({parse_mode: 'HTML'})
-        .markup(Markup.inlineKeyboard(convertListToMarkup())))
-        flag = true
-    }
-}
-
 function convertListToMarkup(){
     var keyboard = []
     prodList.forEach((element, i) => {
@@ -67,7 +57,7 @@ function convertListToMarkup(){
 
 async function replyProduct(ctx){
     try{
-        flag = false
+
         try{
             await ctx.replyWithPhoto(element.imageSrc,
                 Extra.load({
