@@ -18,6 +18,7 @@ class ProductSceneGenerator{
             const promise = query.getAll()
             promise.then(async (data) =>{
                 prodList = data
+                console.log(prodList)
                 flag = false
                 replyBeginMes(ctx)
                 return ctx.wizard.next()
