@@ -71,20 +71,20 @@ class FondSceneGenerator{
         }, async ctx => {
             try{
                 if (typeof ctx.callbackQuery !== "undefined" && ctx.callbackQuery.data === 'отмена'){
-                    beginMessage(ctx)
+                    return beginMessage(ctx)
                 } else {
                     const replace = ctx.message.text
                     if (typeof replace !== 'undefined')
                     {
                         if (callbackQuery === 'контактам'){
                             file.fondInfo.contact = replace
-                            updateInfo(ctx)
+                            return updateInfo(ctx)
                         }else if (callbackQuery === 'описанию'){                     
                             file.fondInfo.description = replace
-                            updateInfo(ctx)
+                            return updateInfo(ctx)
                         }else if (callbackQuery === 'изображению'){
                             file.fondInfo.imageSrc = replace
-                            updateInfo(ctx)
+                            return updateInfo(ctx)
                         }
                 }}                       
             }catch(e){console.log(e)}
@@ -92,7 +92,7 @@ class FondSceneGenerator{
             try{
                 if (typeof ctx.callbackQuery !== "undefined"){
                     var data = ctx.callbackQuery.data
-                    if (data === 'отмена') beginMessage(ctx)
+                    if (data === 'отмена') return beginMessage(ctx)
                     if (data === "add"){
                         element = {}
                         ctx.webhookReply = false
@@ -109,7 +109,7 @@ class FondSceneGenerator{
         }, async ctx => {
             try{
                 if (typeof ctx.callbackQuery !== "undefined" && ctx.callbackQuery.data === 'отмена'){
-                    beginMessage(ctx)
+                    return beginMessage(ctx)
                 } 
                 if (typeof ctx.message !== "undefined"){
                     const text = ctx.message.text
@@ -123,7 +123,7 @@ class FondSceneGenerator{
         }, async ctx => {
             try{
                 if (typeof ctx.callbackQuery !== "undefined" && ctx.callbackQuery.data === 'отмена'){
-                    beginMessage(ctx)
+                    return beginMessage(ctx)
                 } 
                 if (typeof ctx.message !== "undefined"){
                     const text = ctx.message.text
@@ -134,7 +134,7 @@ class FondSceneGenerator{
                         await fs.writeFileSync("answers.json", `${JSON.stringify(answers)}`);
                         await ctx.reply("Элемент добавлен")
                         betw+=1
-                        beginMessage(ctx)
+                        return beginMessage(ctx)
                 }
             }}catch(e){  
                 console.log(e)      
@@ -142,10 +142,6 @@ class FondSceneGenerator{
         })
 
         require('../util/globalCommands')(item)
-            
-        item.action('отмена', async ctx => {
-            beginMessage(ctx)
-        })
 
         item.action('удалить', async ctx => {
             try{
@@ -153,7 +149,7 @@ class FondSceneGenerator{
                 await fs.writeFileSync("answers.json", `${JSON.stringify(answers)}`);
                 betw+=1
                 await ctx.replyWithHTML("Элемент удален")
-                beginMessage(ctx)
+                return beginMessage(ctx)
             }catch(e){}
         })
 
@@ -168,7 +164,7 @@ async function updateInfo(ctx){
         await fs.writeFileSync("info.json", `${JSON.stringify(file)}`);
         betw+=1
         await ctx.reply("Изменения прошли успешно")
-        beginMessage(ctx)
+        return beginMessage(ctx)
     } catch(e){}
 } 
 
