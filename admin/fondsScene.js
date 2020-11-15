@@ -70,25 +70,29 @@ class FondSceneGenerator{
             }}
         }, async ctx => {
             try{
-                const replace = ctx.message.text
-                if (typeof replace !== 'undefined')
-                {
-                    if (callbackQuery === 'контактам'){
-                        file.fondInfo.contact = replace
-                        updateInfo(ctx)
-                    }else if (callbackQuery === 'описанию'){                     
-                        file.fondInfo.description = replace
-                        updateInfo(ctx)
-                    }else if (callbackQuery === 'изображению'){
-                        file.fondInfo.imageSrc = replace
-                        updateInfo(ctx)
-                    }
-                }                        
+                if (typeof ctx.callbackQuery !== "undefined" && ctx.callbackQuery.data === 'отмена'){
+                    beginMessage(ctx)
+                } else {
+                    const replace = ctx.message.text
+                    if (typeof replace !== 'undefined')
+                    {
+                        if (callbackQuery === 'контактам'){
+                            file.fondInfo.contact = replace
+                            updateInfo(ctx)
+                        }else if (callbackQuery === 'описанию'){                     
+                            file.fondInfo.description = replace
+                            updateInfo(ctx)
+                        }else if (callbackQuery === 'изображению'){
+                            file.fondInfo.imageSrc = replace
+                            updateInfo(ctx)
+                        }
+                }}                       
             }catch(e){console.log(e)}
         }, async ctx => {
             try{
                 if (typeof ctx.callbackQuery !== "undefined"){
                     var data = ctx.callbackQuery.data
+                    if (data === 'отмена') beginMessage(ctx)
                     if (data === "add"){
                         element = {}
                         ctx.webhookReply = false
@@ -104,6 +108,9 @@ class FondSceneGenerator{
             }catch(e){console.log(e)}
         }, async ctx => {
             try{
+                if (typeof ctx.callbackQuery !== "undefined" && ctx.callbackQuery.data === 'отмена'){
+                    beginMessage(ctx)
+                } 
                 if (typeof ctx.message !== "undefined"){
                     const text = ctx.message.text
                     if (typeof text !== 'undefined'){
@@ -115,6 +122,9 @@ class FondSceneGenerator{
             }}catch(e){console.log(e)}
         }, async ctx => {
             try{
+                if (typeof ctx.callbackQuery !== "undefined" && ctx.callbackQuery.data === 'отмена'){
+                    beginMessage(ctx)
+                } 
                 if (typeof ctx.message !== "undefined"){
                     const text = ctx.message.text
                     if (typeof text !== 'undefined'){
