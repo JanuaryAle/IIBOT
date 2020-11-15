@@ -26,6 +26,7 @@ class FondSceneGenerator{
             try{
                 if (typeof ctx.message !== "undefined" && callbackQuery === "ask"){
                     try{
+                        ctx.webhookReply = false
                         console.log(ctx)
                         const question = {
                             chat_id: ctx.chat.id,
@@ -40,7 +41,8 @@ class FondSceneGenerator{
                         Extra.HTML())
                         await ctx.reply("Ваше обращение успешно отправлено!")
                         clearStack(ctx)
-                        startPoint(ctx)
+                        ctx.webhookReply = true
+                        //startPoint(ctx)
                     }catch(e){}
                 }else if (typeof ctx.callbackQuery !== "undefined"){
                 
