@@ -43,7 +43,6 @@ async function beginMessage(ctx){
                 ctx.webhookReply = true
             }
     }
-    return await ctx.wizard.selectStep(1)
 }
 
 class FondSceneGenerator{
@@ -71,28 +70,33 @@ class FondSceneGenerator{
         }, async ctx => {
             try{
                 if (typeof ctx.callbackQuery !== "undefined" && ctx.callbackQuery.data === 'отмена'){
-                    return beginMessage(ctx)
+                    beginMessage(ctx)
+                    return await ctx.wizard.selectStep(1)
                 } else {
                     const replace = ctx.message.text
                     if (typeof replace !== 'undefined')
                     {
                         if (callbackQuery === 'контактам'){
                             file.fondInfo.contact = replace
-                            return updateInfo(ctx)
+                            updateInfo(ctx)
                         }else if (callbackQuery === 'описанию'){                     
                             file.fondInfo.description = replace
-                            return updateInfo(ctx)
+                            updateInfo(ctx)
                         }else if (callbackQuery === 'изображению'){
                             file.fondInfo.imageSrc = replace
-                            return updateInfo(ctx)
+                            updateInfo(ctx)
                         }
+                        return await ctx.wizard.selectStep(1)
                 }}                       
             }catch(e){console.log(e)}
         }, async ctx => {
             try{
                 if (typeof ctx.callbackQuery !== "undefined"){
                     var data = ctx.callbackQuery.data
-                    if (data === 'отмена') return beginMessage(ctx)
+                    if (data === 'отмена') {
+                        beginMessage(ctx)
+                        return await ctx.wizard.selectStep(1)
+                    }
                     if (data === "add"){
                         element = {}
                         ctx.webhookReply = false
@@ -103,9 +107,10 @@ class FondSceneGenerator{
                         ctx.webhookReply = false
                         element = answers.values[+(data)]
                         stack.push(await ctx.editMessageText(`Вопрос:\n${element.question}\n\nОтвет:\n${element.answer}`, Extra.HTML().markup(Markup.inlineKeyboard([Markup.callbackButton('🗑Удалить', 'удалить'), Markup.callbackButton('Отмена', 'отмена')]))))
-                        ctx.webhookReply = true
+                        ctx.webhookReply = true                    
+                        return await ctx.wizard.back()
                 }}
-            }catch(e){console.log(e)}
+            }catch(e){}
         }, async ctx => {
             try{
                 if (typeof ctx.callbackQuery !== "undefined" && ctx.callbackQuery.data === 'отмена'){
@@ -123,7 +128,8 @@ class FondSceneGenerator{
         }, async ctx => {
             try{
                 if (typeof ctx.callbackQuery !== "undefined" && ctx.callbackQuery.data === 'отмена'){
-                    return beginMessage(ctx)
+                    beginMessage(ctx)
+                    return await ctx.wizard.selectStep(1)
                 } 
                 if (typeof ctx.message !== "undefined"){
                     const text = ctx.message.text
@@ -134,7 +140,8 @@ class FondSceneGenerator{
                         await fs.writeFileSync("answers.json", `${JSON.stringify(answers)}`);
                         await ctx.reply("Элемент добавлен")
                         betw+=1
-                        return beginMessage(ctx)
+                        beginMessage(ctx)
+                        return await ctx.wizard.selectStep(1)
                 }
             }}catch(e){  
                 console.log(e)      
@@ -149,7 +156,7 @@ class FondSceneGenerator{
                 await fs.writeFileSync("answers.json", `${JSON.stringify(answers)}`);
                 betw+=1
                 await ctx.replyWithHTML("Элемент удален")
-                return beginMessage(ctx)
+                
             }catch(e){}
         })
 
