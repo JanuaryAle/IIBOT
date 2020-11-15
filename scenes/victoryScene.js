@@ -18,8 +18,12 @@ class VictorySceneGenerator{
                 promise.then( async (data) =>{
                         victoryList = data
                         ctx.webhookReply = false
-                        getBeginMes(ctx)
-                        console.log(ctx)
+                        await ctx.replyWithHTML(`<b>Вот вы и в разделе обучения!</b>\n\nНиже для вас представлен список статей🎲\n`
+                        + `❓ В конце каждой вы можете проверить свои знания\n`
+                        + `❓ Нажмите на название, чтобы приступить к прочтению`, 
+                        Extra.HTML({parse_mode: 'HTML'})
+                        .markup(Markup.inlineKeyboard(await convertListToMarkup())))
+                        console.log()
                         ctx.webhookReply = true
                         return ctx.wizard.next()
                     })                    
