@@ -13,7 +13,7 @@ const newsScene = require('./scenes/newsScene')
 const productScene = require('./scenes/productScene')
 const victoryScene = require('./scenes/victoryScene')
 const adminScene = require('./admin/adminScene')
-const fondSceneA = require('./admin/fondsScene')
+const fondSceneA = require('./admin/fondScene')
 
 const mongoose = require('mongoose')
 
@@ -42,15 +42,18 @@ bot.use(session())
 bot.use(stage.middleware())
 stage.register(fondScene, newsScene, productScene, victoryScene, adminScene, fondSceneA)
 
-bot.telegram.setWebhook(`${URL}/bot${TOKEN}`)
+if (process.env.NODE_ENV === "production")
+{
+    bot.telegram.setWebhook(`${URL}/bot${TOKEN}`)
+}else{
+    bot.launch(5000)
+}
 
 require('./util/globalCommands')(bot)
 
-
-bot.action(/fond|vic|prod|news/, async ctx => {
+bot.action(/fond|vic|prod|news|redFond/, async ctx => {
     const callbackQuery = ctx.callbackQuery.data
     await ctx.scene.enter(callbackQuery)        
 })
 
-//bot.launch(5000)
 module.exports = bot

@@ -5,30 +5,22 @@ const Extra = require('telegraf/extra')
 class AdminMode{
     GetAdminScene() {
         const item = new Scene('admin')
+
         require('../util/globalCommands')(item)
         item.enter(async ctx =>
         {
             
             await ctx.reply("<b>Вы находитесь в режиме администратора</b>", Extra.HTML().markup(Markup.inlineKeyboard([
-                [Markup.callbackButton('🏢Редактировать информацию о фонде', 'fondRedInAdmin')],
-                [Markup.callbackButton('👩🏻‍🎓Редактировать раздел обучения', 'victRedInAdmin')],
-                [Markup.callbackButton('🧞Редактировать раздел услуг', 'prodRedInAdmin')],
+                [Markup.callbackButton('🏢Редактировать информацию о фонде', 'redFond')],
+                [Markup.callbackButton('👩🏻‍🎓Редактировать раздел обучения', 'victRed')],
+                [Markup.callbackButton('🧞Редактировать раздел услуг', 'prodRed')],
             ])))            
         })
 
-        item.action('fondRedInAdmin', async ctx => 
-        {
-            ctx.scene.enter('fondRed')
-        })
-
-        item.action('victRedInAdmin', async ctx => 
-        {
-            ctx.scene.enter('victRed')
-        })
-
-        item.action('prodRedInAdmin', async ctx => 
-        {
-            ctx.scene.enter('prodRed')
+        item.action(/vic|fond|news|redFond/, async ctx => {
+            const callbackQuery = ctx.callbackQuery.data
+            console.log(callbackQuery)
+            await ctx.scene.enter(callbackQuery)       
         })
 
         return item
