@@ -17,14 +17,14 @@ class ProductSceneGenerator{
             promise.then(async (data) =>{
                 prodList = data
                 ctx.webhookReply = false
-                await ctx.replyWithHTML(`<b>Вы перешли в раздел наших услуг</b>\n\n`
+                await ctx.replyWithHTML(`<b>Вы перешли в раздел наших услуг</b>\n`
                 + `Мы любим нашу работу и вкладываем душу в разработку представленных ниже продуктов.`
                 + ` Каждый их них мы используем и для себя, поэтому гарантируем высокий уровень надежности!\n\n`
                 + `Узнайте подробнее про услугу, кликнув на нее, и если захотите, то напишите нам ваши впечатления или сделайте заказ.\т`
                 + `Мы предоставим вам контакты✨`,
                 Extra.HTML({parse_mode: 'HTML'})
                 .markup(Markup.inlineKeyboard(convertListToMarkup())))              
-                ctx.webhookReply = false
+                ctx.webhookReply = true
                 return ctx.wizard.next()
             }).catch( err => console.log(err))
           

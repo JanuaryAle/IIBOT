@@ -15,15 +15,16 @@ class VictorySceneGenerator{
         const item = new WizardScene('vic',
             async (ctx) => {
                 const promise = query.getAll()
+                stack = []
                 promise.then( async (data) =>{
                         victoryList = data
                         ctx.webhookReply = false
-                        await ctx.replyWithHTML(`<b>Вот вы и в разделе обучения!</b>\n\nНиже для вас представлен список статей🎲\n`
+                        console.log(await ctx.replyWithHTML(`<b>Вот вы и в разделе обучения!</b>\n\nНиже для вас представлен список статей🎲\n`
                         + `❓ В конце каждой вы можете проверить свои знания\n`
                         + `❓ Нажмите на название, чтобы приступить к прочтению`, 
                         Extra.HTML({parse_mode: 'HTML'})
-                        .markup(Markup.inlineKeyboard(await convertListToMarkup())))
-                        console.log()
+                        .markup(Markup.inlineKeyboard(await convertListToMarkup()))))
+                        
                         ctx.webhookReply = true
                         return ctx.wizard.next()
                     })                    
@@ -63,22 +64,25 @@ class VictorySceneGenerator{
                 })
 
                 item.action(/art#(.+)/, async ctx => {
-                    ctx.webhookReply = false
+                    
                     const name = ctx.callbackQuery.data.split('#')[1]
                     element = victoryList.filter(item => item.title === name)[0]
                     if (typeof element !== "undefined") {
                         clearStack(ctx)
                         try{
+                            ctx.webhookReply = false
                             stack.push(await ctx.replyWithPhoto(element.imageSrc, Extra.load()))
+                            ctx.webhookReply = true
                         }catch(e) {}  
+                        ctx.webhookReply = false
                         stack.push(await ctx.replyWithHTML(`<b>${element.title}</b>\n\n${element.article}`,
                         Extra.HTML()
                         .markup(Markup.inlineKeyboard([
                             [Markup.callbackButton('✏️Пройти тестирование', 'test')],
                         ]))))
+                        ctx.webhookReply = true  
                         return await ctx.wizard.selectStep(1)
-                    } 
-                    ctx.webhookReply = true  
+                    }                  
                 })
                     
         return item  

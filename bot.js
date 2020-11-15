@@ -36,7 +36,6 @@ bot.use(async (ctx, next) => {
     await next()
     const response_time = new Date() - start
     console.log(`(Response Time: ${response_time})`)
-    ctx.webhookReply = false
   })
 
 bot.use(session())

@@ -39,12 +39,13 @@ class FondSceneGenerator{
                         Extra.HTML())
                         await ctx.reply("Ваше обращение успешно отправлено!")
                         clearStack(ctx)
+
                     }catch(e){console.log(e)}
                 }else if (typeof ctx.callbackQuery !== "undefined"){
                 
                     callbackQuery = ctx.callbackQuery.data
                     if (callbackQuery === 'more'){
-                        //ctx.webhookReply = false
+                        ctx.webhookReply = false
                         clearStack(ctx)
                         flag = false
                         try{             
@@ -59,29 +60,29 @@ class FondSceneGenerator{
                                 parse_mode: 'HTML'
                             }).markup(Markup.inlineKeyboard([Markup.callbackButton('🔙Назад', 'отмена')]))))
                         } 
-                       // ctx.webhookReply = true
+                        ctx.webhookReply = true
                     }else if (callbackQuery === "ask"){
-                            //ctx.webhookReply = false
+                            ctx.webhookReply = false
                             clearStack(ctx)
                             flag = false
                             stack.push(await ctx.replyWithHTML("Что бы вы хотели узнать? Отправьте ваш вопрос и наши специалисты напишут вам в ближайшее время", Extra.HTML().markup(Markup.inlineKeyboard([[Markup.callbackButton('🔙Назад', 'отмена')]]))))                           
-                            //ctx.webhookReply = true
+                            ctx.webhookReply = true
                     }
                     else if (callbackQuery === "ques"){
-                        //ctx.webhookReply = false
+                        ctx.webhookReply = false
                         clearStack(ctx)
                         flag = false
                         stack.push(await ctx.replyWithHTML("<b>Ниже представлен список часто задаваемых вопросов</b>\nКликните, чтобы увидеть ответ", Extra.HTML().markup(Markup.inlineKeyboard(convertKeyboard(answers.values)))))   
-                        //ctx.webhookReply = true
+                        ctx.webhookReply = true
                     }else{
                         try {
                             var index = parseInt(callbackQuery)
                             if (index != NaN){
-                                //ctx.webhookReply = false
+                                ctx.webhookReply = false
                                 flag = false
                                 const element = answers.values[+(ctx.callbackQuery.data)]
                                 stack.push(await ctx.replyWithHTML(`<b>Вопрос:</b>\n${element.question}\n\n<b>Ответ:</b>\n${element.answer}`))
-                                //ctx.webhookReply = true
+                                ctx.webhookReply = true
                             }
                         }catch(e){} 
                     }
