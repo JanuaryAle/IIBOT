@@ -86,8 +86,9 @@ class FondSceneGenerator{
                             file.fondInfo.imageSrc = replace
                             updateInfo(ctx)
                         }
-                        return await ctx.wizard.selectStep(1)
-                }}                       
+                    }
+                    return await ctx.wizard.selectStep(1)
+                }                       
             }catch(e){console.log(e)}
         }, async ctx => {
             try{
@@ -108,7 +109,7 @@ class FondSceneGenerator{
                         element = answers.values[+(data)]
                         stack.push(await ctx.editMessageText(`Вопрос:\n${element.question}\n\nОтвет:\n${element.answer}`, Extra.HTML().markup(Markup.inlineKeyboard([Markup.callbackButton('🗑Удалить', 'удалить'), Markup.callbackButton('Отмена', 'отмена')]))))
                         ctx.webhookReply = true                    
-                        return await ctx.wizard.back()
+                        return await ctx.wizard.selectStep(1)
                 }}
             }catch(e){}
         }, async ctx => {
@@ -130,7 +131,6 @@ class FondSceneGenerator{
             try{
                 if (typeof ctx.callbackQuery !== "undefined" && ctx.callbackQuery.data === 'отмена'){
                     beginMessage(ctx)
-                    return await ctx.wizard.selectStep(1)
                 } 
                 if (typeof ctx.message !== "undefined"){
                     const text = ctx.message.text
@@ -142,8 +142,8 @@ class FondSceneGenerator{
                         await ctx.reply("Элемент добавлен")
                         betw+=1
                         beginMessage(ctx)
-                        return await ctx.wizard.selectStep(1)
                 }
+                return await ctx.wizard.selectStep(1)
             }}catch(e){  
                 console.log(e)      
             }
@@ -171,7 +171,7 @@ async function updateInfo(ctx){
         await fs.writeFileSync("info.json", `${JSON.stringify(file)}`);
         betw+=1
         await ctx.reply("Изменения прошли успешно")
-        return beginMessage(ctx)
+        beginMessage(ctx)
     } catch(e){}
 } 
 
