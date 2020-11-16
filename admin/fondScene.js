@@ -62,7 +62,7 @@ class FondSceneGenerator{
                     }else if(callbackQuery === "удалить"){
                         try{
                             answers.values = answers.values.filter(item => item != element)
-                            await fs.writeFileSync("answers.json", `${JSON.stringify(answers)}`);
+                            await fs.writeFileSync("data/answers.json", `${JSON.stringify(answers)}`);
                             await ctx.replyWithHTML("Элемент удален")
                             abort(ctx)
                         }catch(e){}
