@@ -52,7 +52,7 @@ class VictorySceneGenerator{
                 )           
                 require('../util/globalCommands')(item)
 
-                item.action(/fond|prod|news/, async ctx => {
+                item.action(/fond|prod|news|redVic/, async ctx => {
                     const callbackQuery = ctx.callbackQuery.data
                     await ctx.scene.enter(callbackQuery)     
                 })

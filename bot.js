@@ -14,6 +14,7 @@ const victoryScene = require('./scenes/victoryScene')
 const adminScene = require('./admin/adminScene')
 const fondSceneA = require('./admin/fondScene')
 const productSceneA = require('./admin/productScene')
+const victorySceneA = require('./admin/victoryScene')
 
 const mongoose = require('mongoose')
 
@@ -41,7 +42,7 @@ bot.use(async (ctx, next) => {
 
 bot.use(session())
 bot.use(stage.middleware())
-stage.register(fondScene, newsScene, adminScene, victoryScene, fondSceneA, productScene, productSceneA) // productScene, victoryScene,
+stage.register(fondScene, newsScene, adminScene, victoryScene, fondSceneA, productScene, productSceneA, victorySceneA) // productScene, victoryScene,
 
 if (process.env.NODE_ENV === "production")
 {

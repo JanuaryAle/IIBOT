@@ -9,15 +9,14 @@ class AdminMode{
         require('../util/globalCommands')(item)
         item.enter(async ctx =>
         {
-            
-            await ctx.reply("<b>Вы находитесь в режиме администратора</b>", Extra.HTML().markup(Markup.inlineKeyboard([
+            await ctx.reply("Вы находитесь в режиме администратора", Extra.HTML().markup(Markup.inlineKeyboard([
                 [Markup.callbackButton('🏢Редактировать информацию о фонде', 'redFond')],
-                [Markup.callbackButton('👩🏻‍🎓Редактировать раздел обучения', 'victRed')],
+                [Markup.callbackButton('👩🏻‍🎓Редактировать раздел обучения', 'redVic')],
                 [Markup.callbackButton('🧞Редактировать раздел услуг', 'redProd')],
             ])))            
         })
 
-        item.action(/redFond|redProd/, async ctx => {
+        item.action(/fond|prod|vic|red/, async ctx => {
             const callbackQuery = ctx.callbackQuery.data
             await ctx.scene.enter(callbackQuery)       
         })

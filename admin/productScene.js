@@ -64,13 +64,17 @@ class ProductSceneGenerator{
                     }else if(callbackQuery === "удалить") {
                             prodList = prodList.filter(item=> item.name !== element.name)
                             const promise = query.remove(element)
+                            
                             promise.then(async data => {
-                                await ctx.reply("Услуга успешно удалена")
-                                console.log(prodList)
+                                ctx.webhookReply = false
+                                stack.push(await ctx.reply("Услуга успешно удалена"))
                                 editBeginMes(ctx)
+                                ctx.webhookReply = true
                             }).catch(async err => {
-                                await ctx.reply("Не удалось удалить услугу")
-                            })
+                                ctx.webhookReply = false
+                                stack.push(await ctx.reply("Не удалось удалить услугу"))
+                                ctx.webhookReply = true
+                            })                   
                             clearStack(ctx)
                     }else if (callbackQuery === "названию услуги" || callbackQuery === "описанию услуги" || callbackQuery === "стоимости услуги" || callbackQuery === "контакту" || callbackQuery === "изображению" ){ 
                         ctx.webhookReply = false
@@ -84,12 +88,14 @@ class ProductSceneGenerator{
                         }else if (callbackQuery.search(/vic|news|fond|prod/)){
                             const callbackQuery = ctx.callbackQuery.data
                             await ctx.scene.enter(callbackQuery)  
+                        }else if (callbackQuery === "admin"){
+                            const callbackQuery = ctx.callbackQuery.data
+                            await ctx.scene.enter(callbackQuery) 
                         }
                     }
 
                 }else if(typeof ctx.message !== "undefined" && typeof ctx.message.text !== "undefined"){
                     const replace = ctx.message.text
-
                     if (callbackQuery === "добавить"){
                         const text = changeSmth(elementAdditionPosition, replace)  
                         await ctx.telegram.editMessageText( stack[stack.length - 1].chat.id, stack[stack.length - 1].message_id, undefined,
@@ -104,15 +110,20 @@ class ProductSceneGenerator{
                         elementAdditionPosition += 1
                         if (elementAdditionPosition === 5){
                             const promise1 = query.create(element)
-                            clearStack(ctx)
+                            clearStack(ctx)                         
                                 promise1.then(async data =>
                                 {
+                                    ctx.webhookReply = false
                                     prodList.push(data)
                                     editBeginMes(ctx)
-                                    await ctx.replyWithHTML(`Услуга успешно добавлена!\nВы сможете в дальнейшем отредактировать какой-либо пункт`)                            
+                                    ctx.webhookReply = true
+                                    stack.push(await ctx.replyWithHTML(`Услуга успешно добавлена!\nВы сможете в дальнейшем отредактировать какой-либо пункт`))                            
                                 }).catch( async () => {
+                                    ctx.webhookReply = false
                                     await ctx.reply(`Не удалось загрузить услугу, возможно, не выполнено условие уникальности`)
+                                    ctx.webhookReply = true
                                 })
+                            
                         }
                     }else if (callbackQuery === "названию услуги"){
                         changeSmth(0, replace, ctx)  
@@ -130,7 +141,12 @@ class ProductSceneGenerator{
                     stack.push(await ctx.reply("Вы ввели что-то неожиданное для меня, попробуйте еще раз...😦"))
                     ctx.webhookReply = true
                 }
-            }catch(e){console.log(e)}
+            }catch(e){}
+        })
+
+        item.leave(async ctx => {
+            clearStack(ctx)
+            ctx.telegram.deleteMessage(startMessage.chat.id, startMessage.message_id)
         })
 
         require('../util/globalCommands')(item)
@@ -154,6 +170,7 @@ function convertListToMarkup(){
         keyboard.push([Markup.callbackButton(element.name, `${element.name}`)])
     });
     keyboard.push([Markup.callbackButton('➕Добавить', 'добавить')])
+    keyboard.push([Markup.callbackButton('В меню админа', 'admin')])
     return keyboard
 }
 
@@ -184,7 +201,6 @@ function clearStack(ctx){
 function changeSmth(num, data, ctx){
     let message
     var name = element.name
-    console.log(element)
     switch(num){
         case 0: {
             element.name = data

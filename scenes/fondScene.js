@@ -91,7 +91,7 @@ class FondSceneGenerator{
 
         require('../util/globalCommands')(item)
             
-        item.action(/vic|prod|news/, async ctx => {
+        item.action(/vic|prod|news|redFond/, async ctx => {
             const callbackQuery = ctx.callbackQuery.data
             await ctx.scene.enter(callbackQuery)  
         })
