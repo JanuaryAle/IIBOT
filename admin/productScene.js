@@ -26,11 +26,12 @@ class ProductSceneGenerator{
         const item = new WizardScene('redProd', 
         async (ctx) => {
             const promise = query.getAll()
+            ctx.webhookReply = false
             startMessage = await ctx.reply("Вы редактируете раздел услуг")
+            ctx.webhookReply = true
             promise.then(async (data) =>{
                 stack = []
                 prodList = data
-                console.log(data)
                 editBeginMes(ctx)
                 return ctx.wizard.next()
             })
@@ -68,7 +69,7 @@ class ProductSceneGenerator{
                                 console.log(prodList)
                                 editBeginMes(ctx)
                             }).catch(async err => {
-                                await ctx.reply("Не удалось удалить статью")
+                                await ctx.reply("Не удалось удалить услугу")
                             })
                             clearStack(ctx)
                     }else if (callbackQuery === "названию услуги" || callbackQuery === "описанию услуги" || callbackQuery === "стоимости услуги" || callbackQuery === "контакту" || callbackQuery === "изображению" ){ 
