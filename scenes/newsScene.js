@@ -42,6 +42,7 @@ class NewsSceneGenerator{
         
         item.leave(async ctx => {
             await ctx.reply('Вы покинули раздел новости...', Extra.markup(Markup.removeKeyboard()))
+            flag = false
         })
 
         return item
