@@ -13,13 +13,12 @@ class AdminMode{
             await ctx.reply("<b>Вы находитесь в режиме администратора</b>", Extra.HTML().markup(Markup.inlineKeyboard([
                 [Markup.callbackButton('🏢Редактировать информацию о фонде', 'redFond')],
                 [Markup.callbackButton('👩🏻‍🎓Редактировать раздел обучения', 'victRed')],
-                [Markup.callbackButton('🧞Редактировать раздел услуг', 'prodRed')],
+                [Markup.callbackButton('🧞Редактировать раздел услуг', 'redProd')],
             ])))            
         })
 
-        item.action(/redFond/, async ctx => {
+        item.action(/redFond|redProd/, async ctx => {
             const callbackQuery = ctx.callbackQuery.data
-            console.log(callbackQuery)
             await ctx.scene.enter(callbackQuery)       
         })
 

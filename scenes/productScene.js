@@ -12,7 +12,6 @@ class ProductSceneGenerator{
     GetProductsScene() {
         const item = new WizardScene('prod', 
         async (ctx) => {
-            console.log("on fond ok")
             const promise = query.getAll()
             promise.then(async (data) =>{
                 prodList = data

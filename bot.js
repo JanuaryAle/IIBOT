@@ -13,6 +13,7 @@ const productScene = require('./scenes/productScene')
 const victoryScene = require('./scenes/victoryScene')
 const adminScene = require('./admin/adminScene')
 const fondSceneA = require('./admin/fondScene')
+const productSceneA = require('./admin/productScene')
 
 const mongoose = require('mongoose')
 
@@ -40,7 +41,7 @@ bot.use(async (ctx, next) => {
 
 bot.use(session())
 bot.use(stage.middleware())
-stage.register(fondScene, newsScene, adminScene, victoryScene, fondSceneA, productScene) // productScene, victoryScene,
+stage.register(fondScene, newsScene, adminScene, victoryScene, fondSceneA, productScene, productSceneA) // productScene, victoryScene,
 
 if (process.env.NODE_ENV === "production")
 {
@@ -51,7 +52,7 @@ if (process.env.NODE_ENV === "production")
 
 require('./util/globalCommands')(bot)
 
-bot.action(/fond|news|redFond|vic/, async ctx => {
+bot.action(/fond|news|prod|vic/, async ctx => {
     const callbackQuery = ctx.callbackQuery.data
     await ctx.scene.enter(callbackQuery)        
 })

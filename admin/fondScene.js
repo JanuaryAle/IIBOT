@@ -57,7 +57,6 @@ class FondSceneGenerator{
             try{
                 if (typeof ctx.callbackQuery !== "undefined"){
                     callbackQuery = ctx.callbackQuery.data
-                    console.log("in callback")
                     if (callbackQuery === "отмена"){
                         abort(ctx)
                     }else if(callbackQuery === "удалить"){
@@ -90,10 +89,12 @@ class FondSceneGenerator{
                         element = answers.values[+(callbackQuery)]
                         stack.push(await ctx.editMessageText(`Вопрос:\n${element.question}\n\nОтвет:\n${element.answer}`, Extra.HTML().markup(Markup.inlineKeyboard([Markup.callbackButton('🗑Удалить', 'удалить'), Markup.callbackButton('Отмена', 'отмена')]))))
                         ctx.webhookReply = true
+                    }else if (callbackQuery.search(/vic|news|fond|prod/)){
+                        const callbackQuery = ctx.callbackQuery.data
+                        await ctx.scene.enter(callbackQuery)  
                     }
 
                 }else if (typeof ctx.message !== "undefined" && typeof ctx.message.text !== "undefined"){
-                    console.log("in text")
                     const replace = ctx.message.text
                     if (callbackQuery !== ""){
                         clearStack(ctx)
@@ -133,12 +134,6 @@ class FondSceneGenerator{
         })
 
         require('../util/globalCommands')(item)
-        //Добааааавь
-        item.action(/vic$|news$|fond$/, async ctx => {
-            console.log("fondRed was leaved")
-            const callbackQuery = ctx.callbackQuery.data
-            await ctx.scene.enter(callbackQuery)       
-        })
 
         return item
     }
@@ -165,9 +160,11 @@ function convertKeyboard(element){
     return keyboard
 }
 
-function clearStack(ctx){
-    stack.forEach(item => {
-        ctx.telegram.deleteMessage(item.chat.id, item.message_id)
+function clearStack(ctx){  
+    stack.forEach((item, i) => {
+            if (item.message_id){
+                ctx.telegram.deleteMessage(item.chat.id, item.message_id)
+            }
     })
     stack = []
 }
