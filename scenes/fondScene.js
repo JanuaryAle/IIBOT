@@ -34,8 +34,9 @@ class FondSceneGenerator{
                             userId: ctx.update.message.from.id,
                             userFirstName: ctx.update.message.from.first_name
                         }
+                        console.log(ctx.update)
                         await ctx.telegram.sendMessage(CHAT_ID,
-                        `❓❓❓ Вам только что поступил вопрос от пользователя <a href="tg://user?id=${question.userId}">${question.userFirstName}</a>: \n${question.message}`,
+                        `<b>Вам только что поступил вопрос от пользователя</b>\n<a href="tg://user?id=${question.userId}">${question.userFirstName}</a>: \n${question.message}`,
                         Extra.HTML())
                         await ctx.reply("Ваше обращение успешно отправлено!")
                         clearStack(ctx)
