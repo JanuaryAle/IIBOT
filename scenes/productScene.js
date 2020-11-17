@@ -16,10 +16,10 @@ class ProductSceneGenerator{
             promise.then(async (data) =>{
                 prodList = data
                 ctx.webhookReply = false
-                await ctx.replyWithHTML(`<b>Вы перешли в раздел наших услуг</b>\n`
+                await ctx.replyWithHTML(`<b>Вы перешли в раздел наших услуг</b>\n\n`
                 + `Мы любим нашу работу и вкладываем душу в разработку представленных ниже продуктов.`
                 + ` Каждый их них мы используем и для себя, поэтому гарантируем высокий уровень надежности!\n\n`
-                + `Узнайте подробнее про услугу, кликнув на нее, и если захотите, то напишите нам ваши впечатления или сделайте заказ.\т`
+                + `Узнайте подробнее про услугу, кликнув на нее, и если захотите, то напишите нам ваши впечатления или сделайте заказ.\n`
                 + `Мы предоставим вам контакты✨`,
                 Extra.HTML({parse_mode: 'HTML'})
                 .markup(Markup.inlineKeyboard(convertListToMarkup())))              
@@ -40,7 +40,7 @@ class ProductSceneGenerator{
 
         require('../util/globalCommands')(item)
 
-        item.action(/vic|fond|news/, async ctx => {
+        item.action(/vic|fond|news|redProd/, async ctx => {
             const callbackQuery = ctx.callbackQuery.data
             await ctx.scene.enter(callbackQuery)       
         })

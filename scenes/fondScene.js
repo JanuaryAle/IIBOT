@@ -117,6 +117,11 @@ class FondSceneGenerator{
             callbackQuery =''
         })
 
+        item.leave(async ctx => {
+            clearStack(ctx)
+            callbackQuery =''
+        })
+
         return item
     }
 }
