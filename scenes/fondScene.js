@@ -12,6 +12,7 @@ const file = require(fileName)
 let flag = false
 let callbackQuery
 let stack = []
+let timeout
 
 const CHAT_ID = process.env.CALLBACK_CHAT
 
@@ -34,13 +35,18 @@ class FondSceneGenerator{
                             userId: ctx.update.message.from.id,
                             userFirstName: ctx.update.message.from.first_name
                         }
-                        console.log(ctx.update)
-                        await ctx.telegram.sendMessage(CHAT_ID,
-                        `<b>Вам только что поступил вопрос от пользователя</b>\n<a href="tg://user?id=${question.userId}">${question.userFirstName}</a>: \n${question.message}`,
-                        Extra.HTML())
-                        await ctx.reply("Ваше обращение успешно отправлено!")
-                        clearStack(ctx)
-
+                        if (ctx.update.message.text){
+                            await ctx.telegram.sendMessage(CHAT_ID,
+                                `<b>Вам только что поступил вопрос от пользователя</b>\n<a href="tg://user?id=${question.userId}">${question.userFirstName}</a>: \n${ctx.update.message.text}`,
+                                Extra.HTML())
+                            clearStack(ctx)
+                            await ctx.reply("Ваше обращение успешно отправлено!")
+                            callbackQuery = ''
+                            clearTimeout(timeout)
+                        }else{
+                            await ctx.reply("Пожалуйста, напишите нам текстом, мы обратимся к вам, чтобы поговорить детально")
+                        }
+        
                     }catch(e){console.log(e)}
                 }else if (typeof ctx.callbackQuery !== "undefined"){
                 
@@ -66,7 +72,16 @@ class FondSceneGenerator{
                             ctx.webhookReply = false
                             clearStack(ctx)
                             flag = false
-                            stack.push(await ctx.replyWithHTML("Что бы вы хотели узнать? Отправьте ваш вопрос и наши специалисты напишут вам в ближайшее время", Extra.HTML().markup(Markup.inlineKeyboard([[Markup.callbackButton('🔙Назад', 'отмена')]]))))                           
+                            let a
+                            stack.push(a = await ctx.replyWithHTML("Что бы вы хотели узнать?🙂\n\nНапишите текст вопроса одним сообщением и наши специалисты ответят вам в ближайшее время", Extra.HTML().markup(Markup.inlineKeyboard([[Markup.callbackButton('🔙Назад', 'отмена')]]))))  
+                            ctx.webhookReply = true
+                            ctx.webhookReply = false
+                            timeout = setTimeout(async () => {
+                              //  console.log('here')
+                                if (typeof stack[stack.length - 1] !== "undefined" && stack[stack.length - 1].message_id === a.message_id)
+                                   { await ctx.telegram.editMessageText(a.chat.id, a.message_id, undefined, "Время ожидания вопроса истекло, если вы все еще хотите задать вопрос, нажмите снова на \"Задайте вопрос\".")
+                                callbackQuery = ''}
+                            }, 120000)
                             ctx.webhookReply = true
                     }
                     else if (callbackQuery === "ques"){
