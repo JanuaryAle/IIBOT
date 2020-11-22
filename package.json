@@ -18,13 +18,13 @@
     "ngrok": "^3.3.0",
     "node-telegram-bot-api": "^0.50.0",
     "nodemon": "^2.0.6",
-    "telegraf": "^3.38.0"
+    "telegraf": "^3.38.0",
+    "telegraf-i18n": "^6.6.0"
   },
   "devDependencies": {},
   "scripts": {
     "start": "node index"
   },
-
   "author": "",
   "license": "ISC"
 }

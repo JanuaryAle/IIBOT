@@ -2,17 +2,17 @@ const Scene = require('telegraf/scenes/base')
 const Markup = require('telegraf/markup')
 const Extra = require('telegraf/extra')
 const GetNewsList = require('../util/parser')
+const { match } = require('telegraf-i18n')
 
 var index
 var list
 var page = 1
 var flag
 var message
-const text = "<b>Вы зашли в раздел Новостной ленты</b>\nЗдесь мы предоставим вам последние актуальные новости по акциям и компаниям📉"
 
 class NewsSceneGenerator{
     GetNewsScene() {
-        const item = new Scene('news')
+        const item = new Scene('📈')
 
         require('../util/globalCommands')(item)
 
@@ -21,27 +21,30 @@ class NewsSceneGenerator{
         list = []
         flag = true
         this.printPortion(3, ctx)
-        message = await ctx.reply(text, Extra.HTML({parse_mode: 'HTML'})
+        message = await ctx.reply(`${ctx.i18n.t('scenes.news.text')}`, Extra.HTML({parse_mode: 'HTML'})
         .markup(Markup.keyboard(
-            [['🔎Показать больше'], ['/bot']]).resize()))
+            [[`${ctx.i18n.t('scenes.news.buttons.more')}`], ['/bot']]).resize()))
         }) 
         
-        item.hears('🔎Показать больше', async ctx => {           
+        item.hears(match('scenes.news.buttons.more'), async ctx => {           
             this.show(ctx)
         }) 
+
+        item.hears(/👩🏻‍🎓|🏢|🧞/, async ctx =>
+            {
+                const text = ctx.message.text
+                const scene = text.charAt(0)+text.charAt(1)
+                await ctx.scene.enter(scene)
+            }  
+          );
 
         item.action('show', async ctx => 
         {
             this.printPortion(3, ctx)
         })
-
-        item.action(/vic|prod|fond/, async ctx => {
-            const callbackQuery = ctx.callbackQuery.data
-            await ctx.scene.enter(callbackQuery)  
-        }) 
         
         item.leave(async ctx => {
-            await ctx.reply('Вы покинули раздел новости...', Extra.markup(Markup.removeKeyboard()))
+   //         await ctx.reply(`${ctx.i18n.t('scenes.news.leave')}`, Extra.markup(Markup.removeKeyboard()))
             flag = false
         })
 
@@ -56,7 +59,7 @@ class NewsSceneGenerator{
         while (k > 0 && index < list.length && flag) 
         {
             const element = list[index]
-            const readMore = `<a href="${element.href}">Посмотрите в источнике</a>`
+            const readMore = `${ctx.i18n.t('scenes.news.source', {href: element.href})}`
             await ctx.replyWithHTML(readMore)
             k--
             index += 1

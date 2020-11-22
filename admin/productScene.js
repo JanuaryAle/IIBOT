@@ -85,7 +85,7 @@ class ProductSceneGenerator{
                         element = prodList.filter(item => item.name === callbackQuery)[0] 
                         if (typeof element !== "undefined"){            
                             editProduct(ctx)   
-                        }else if (callbackQuery.search(/vic|news|fond|prod/)){
+                        }else if (callbackQuery.search(/red/)){
                             const callbackQuery = ctx.callbackQuery.data
                             await ctx.scene.enter(callbackQuery)  
                         }else if (callbackQuery === "admin"){
@@ -143,6 +143,14 @@ class ProductSceneGenerator{
                 }
             }catch(e){}
         })
+
+        item.hears(/👩🏻‍🎓|🏢|📈|🧞/, async ctx =>
+            {
+                const text = ctx.message.text
+                const scene = text.charAt(0)+text.charAt(1)
+                await ctx.scene.enter(scene)
+            }  
+          );
 
         item.leave(async ctx => {
             clearStack(ctx)

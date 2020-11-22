@@ -7,6 +7,9 @@ const {
     session
 } = Telegraf
 
+const TelegrafI18n = require('telegraf-i18n')
+const path = require("path")
+
 const fondScene = require('./scenes/fondScene')
 const newsScene = require('./scenes/newsScene')
 const productScene = require('./scenes/productScene')
@@ -32,6 +35,13 @@ const URL = process.env.URL
 const bot = new Telegraf(TOKEN)
 const stage = new Stage();
 
+const i18n = new TelegrafI18n({
+    defaultLanguage: 'en',
+    directory: path.resolve(__dirname, 'locales'),
+    useSession: true,
+    allowMissing: false,
+    sessionName: 'session'
+});
 
 bot.use(async (ctx, next) => {
     const start = new Date()
@@ -41,8 +51,17 @@ bot.use(async (ctx, next) => {
   })
 
 bot.use(session())
+bot.use(i18n.middleware());
 bot.use(stage.middleware())
-stage.register(fondScene, newsScene, adminScene, victoryScene, fondSceneA, productScene, productSceneA, victorySceneA) // productScene, victoryScene,
+stage.register(fondScene, newsScene, adminScene, victoryScene, fondSceneA, productScene, productSceneA, victorySceneA) 
+
+bot.hears(/👩🏻‍🎓|🏢|📈|🧞/, async ctx =>
+    {
+        const text = ctx.message.text
+        const scene = text.charAt(0)+text.charAt(1)
+        await ctx.scene.enter(scene)
+    }  
+);
 
 if (process.env.NODE_ENV === "production")
 {
@@ -52,10 +71,5 @@ if (process.env.NODE_ENV === "production")
 }
 
 require('./util/globalCommands')(bot)
-
-bot.action(/fond|news|prod|vic/, async ctx => {
-    const callbackQuery = ctx.callbackQuery.data
-    await ctx.scene.enter(callbackQuery)        
-})
 
 module.exports = bot

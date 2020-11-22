@@ -2,7 +2,7 @@ const Koa = require('koa')
 const Router = require('koa-router')
 const bodyParser = require('koa-bodyparser')
 require('dotenv').config()
-const file = require('./data/info.json')
+
 
 const TOKEN = process.env.BOT_TOKEN
 const PORT = process.env.PORT

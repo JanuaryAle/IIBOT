@@ -10,17 +10,13 @@ var element
 class ProductSceneGenerator{
 
     GetProductsScene() {
-        const item = new WizardScene('prod', 
+        const item = new WizardScene('🧞', 
         async (ctx) => {
             const promise = query.getAll()
             promise.then(async (data) =>{
                 prodList = data
                 ctx.webhookReply = false
-                await ctx.replyWithHTML(`<b>Вы перешли в раздел наших услуг</b>\n\n`
-                + `Мы любим нашу работу и вкладываем душу в разработку представленных ниже продуктов.`
-                + ` Каждый их них мы используем и для себя, поэтому гарантируем высокий уровень надежности!\n\n`
-                + `Узнайте подробнее про услугу, кликнув на нее, и если захотите, то напишите нам ваши впечатления или сделайте заказ.\n`
-                + `Мы предоставим вам контакты✨`,
+                await ctx.replyWithHTML(`${ctx.i18n.t('scenes.prod.text')}`,
                 Extra.HTML({parse_mode: 'HTML'})
                 .markup(Markup.inlineKeyboard(convertListToMarkup())))              
                 ctx.webhookReply = true
@@ -38,12 +34,15 @@ class ProductSceneGenerator{
             }}catch(e){console.log(e)}
         })
 
-        require('../util/globalCommands')(item)
+        item.hears(/👩🏻‍🎓|🏢|📈/, async ctx =>
+            {
+                const text = ctx.message.text
+                const scene = text.charAt(0)+text.charAt(1)
+                await ctx.scene.enter(scene)
+            }  
+          );
 
-        item.action(/vic|fond|news|redProd/, async ctx => {
-            const callbackQuery = ctx.callbackQuery.data
-            await ctx.scene.enter(callbackQuery)       
-        })
+        require('../util/globalCommands')(item)
         
         return item
     }
@@ -65,8 +64,7 @@ async function replyProduct(ctx){
         try{
             await ctx.replyWithPhoto(element.imageSrc,
                 Extra.load({
-                    caption: `<b>${element.name}</b>\n\n` + `Стоимость услуги: ${element.price}\n\n`
-                    + `${element.description}\n\n<b>${element.contact}</b>`,
+                    caption: `${ctx.i18n.t('scenes.prod.caption', {name: element.name, price: element.price, description: element.description, contact: element.contact})}`,
                     parse_mode: 'HTML'
                 }))
         }catch(e){}}catch(e){}

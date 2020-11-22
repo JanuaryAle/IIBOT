@@ -19,7 +19,7 @@ const CHAT_ID = process.env.CALLBACK_CHAT
 class FondSceneGenerator{
 
     GetFondStage() {
-        const item = new WizardScene('fond', 
+        const item = new WizardScene('🏢', 
         async (ctx) => {
             flag = false
             startPoint(ctx)
@@ -40,11 +40,11 @@ class FondSceneGenerator{
                                 `<b>Вам только что поступил вопрос от пользователя</b>\n<a href="tg://user?id=${question.userId}">${question.userFirstName}</a>: \n${ctx.update.message.text}`,
                                 Extra.HTML())
                             clearStack(ctx)
-                            await ctx.reply("Ваше обращение успешно отправлено!")
+                            await ctx.reply(`${ctx.i18n.t('scenes.fond.ask.ok')}`)
                             callbackQuery = ''
                             clearTimeout(timeout)
                         }else{
-                            await ctx.reply("Пожалуйста, напишите нам текстом, мы обратимся к вам, чтобы поговорить детально")
+                            await ctx.reply(`${ctx.i18n.t('scenes.fond.ask.err')}`)
                         }
         
                     }catch(e){console.log(e)}
@@ -60,12 +60,12 @@ class FondSceneGenerator{
                                 parse_mode: 'HTML',
                                 caption: `<b>${file.fondInfo.name}</b>\n\n${file.fondInfo.description}`
                                 +`\n\n<b>${file.fondInfo.contact}</b>`
-                            }).markup(Markup.inlineKeyboard([Markup.callbackButton('🔙Назад', 'отмена')]))))                          
+                            }).markup(Markup.inlineKeyboard([Markup.callbackButton(`${ctx.i18n.t('retry')}`, 'отмена')]))))                          
                         }catch(e){
                             stack.push(await ctx.replyWithHTML(`<b>${file.fondInfo.name}</b>\n\n${file.fondInfo.description}`
                             +`\n\n<b>${file.fondInfo.contact}</b>`, Extra.load({
                                 parse_mode: 'HTML'
-                            }).markup(Markup.inlineKeyboard([Markup.callbackButton('🔙Назад', 'отмена')]))))
+                            }).markup(Markup.inlineKeyboard([Markup.callbackButton(`${ctx.i18n.t('retry')}`, 'отмена')]))))
                         } 
                         ctx.webhookReply = true
                     }else if (callbackQuery === "ask"){
@@ -73,13 +73,13 @@ class FondSceneGenerator{
                             clearStack(ctx)
                             flag = false
                             let a
-                            stack.push(a = await ctx.replyWithHTML("Что бы вы хотели узнать?🙂\n\nНапишите текст вопроса одним сообщением и наши специалисты ответят вам в ближайшее время", Extra.HTML().markup(Markup.inlineKeyboard([[Markup.callbackButton('🔙Назад', 'отмена')]]))))  
+                            stack.push(a = await ctx.replyWithHTML(`${ctx.i18n.t('scenes.fond.ask.text')}`, Extra.HTML().markup(Markup.inlineKeyboard([[Markup.callbackButton(`${ctx.i18n.t('retry')}`, 'отмена')]]))))  
                             ctx.webhookReply = true
                             ctx.webhookReply = false
                             timeout = setTimeout(async () => {
-                              //  console.log('here')
+
                                 if (typeof stack[stack.length - 1] !== "undefined" && stack[stack.length - 1].message_id === a.message_id)
-                                   { await ctx.telegram.editMessageText(a.chat.id, a.message_id, undefined, "Время ожидания вопроса истекло, если вы все еще хотите задать вопрос, нажмите снова на \"Задайте вопрос\".")
+                                   { await ctx.telegram.editMessageText(a.chat.id, a.message_id, undefined, `${ctx.i18n.t('scenes.fond.ask.end')}`)
                                 callbackQuery = ''}
                             }, 120000)
                             ctx.webhookReply = true
@@ -88,7 +88,7 @@ class FondSceneGenerator{
                         ctx.webhookReply = false
                         clearStack(ctx)
                         flag = false
-                        stack.push(await ctx.replyWithHTML("<b>Ниже представлен список часто задаваемых вопросов</b>\nКликните, чтобы увидеть ответ", Extra.HTML().markup(Markup.inlineKeyboard(convertKeyboard(answers.values)))))   
+                        stack.push(await ctx.replyWithHTML(`${ctx.i18n.t('scenes.fond.list')}`, Extra.HTML().markup(Markup.inlineKeyboard(convertKeyboard(answers.values, ctx)))))   
                         ctx.webhookReply = true
                     }else{
                         try {
@@ -97,7 +97,10 @@ class FondSceneGenerator{
                                 ctx.webhookReply = false
                                 flag = false
                                 const element = answers.values[+(ctx.callbackQuery.data)]
-                                stack.push(await ctx.replyWithHTML(`<b>Вопрос:</b>\n${element.question}\n\n<b>Ответ:</b>\n${element.answer}`))
+                                stack.push(await ctx.replyWithHTML(`${ctx.i18n.t('scenes.fond.ques', {
+                                    question: element.question,
+                                    answer: element.answer
+                                })}`))
                                 ctx.webhookReply = true
                             }
                         }catch(e){} 
@@ -106,16 +109,19 @@ class FondSceneGenerator{
             })
 
         require('../util/globalCommands')(item)
-            
-        item.action(/vic|prod|news|redFond/, async ctx => {
-            const callbackQuery = ctx.callbackQuery.data
-            await ctx.scene.enter(callbackQuery)  
-        })
 
         item.action('отмена', ctx => {
             clearStack(ctx)
             callbackQuery =''
         })
+
+        item.hears(/👩🏻‍🎓|📈|🧞/, async ctx =>
+            {
+                const text = ctx.message.text
+                const scene = text.charAt(0)+text.charAt(1)
+                await ctx.scene.enter(scene)
+            }  
+          );
 
         item.leave(async ctx => {
             clearStack(ctx)
@@ -128,26 +134,24 @@ class FondSceneGenerator{
 
 module.exports = new FondSceneGenerator().GetFondStage()
 
-  function convertKeyboard(element){
+  function convertKeyboard(element, ctx){
     var keyboard = []
     element.forEach((item, i) => {
         keyboard.push([Markup.callbackButton(item.question, `${i}`)])
     })
-    keyboard.push([Markup.callbackButton('🔙Назад', 'отмена')])
+    keyboard.push([Markup.callbackButton(`${ctx.i18n.t('retry')}`, 'отмена')])
     return keyboard
 }
 
 async function startPoint(ctx){
     flag = true
     callbackQuery = ''
-    await ctx.replyWithHTML(`<b>Добро пожаловать в раздел нашего фонда, ${file.fondInfo.name}</b>!\n\n`
-    + `Здесь мы расскажем вам о себе и будем рады услышать ваши вопросы.\n`
-    + `Желаете получить оперативный ответ?\n🚀 Возможно, мы уже подготовили его в списке часто задаваемых вопросов😄\n`,
+    await ctx.replyWithHTML(`${ctx.i18n.t('scenes.fond.text', { name: file.fondInfo.name})}`,
     Extra.HTML()
     .markup(Markup.inlineKeyboard([
-        [Markup.callbackButton('🙋‍♀️Давайте познакомимся', `more`)],
-        [Markup.callbackButton('🗄Список возможных вопросов', 'ques')],
-        [Markup.callbackButton('📝Задайте вопрос', 'ask')]
+        [Markup.callbackButton(`${ctx.i18n.t('scenes.fond.buttons.more')}`, `more`)],
+        [Markup.callbackButton(`${ctx.i18n.t('scenes.fond.buttons.ques')}`, 'ques')],
+        [Markup.callbackButton(`${ctx.i18n.t('scenes.fond.buttons.ask')}`, 'ask')]
         ])))
         return ctx.wizard.selectStep(1)
 }

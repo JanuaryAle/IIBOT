@@ -12,16 +12,14 @@ class VictorySceneGenerator{
 
     GetVictoryScene () {
 
-        const item = new WizardScene('vic',
+        const item = new WizardScene('👩',
             async (ctx) => {
                 const promise = query.getAll()
                 stack = []
                 promise.then( async (data) =>{
                         victoryList = data
                         ctx.webhookReply = false
-                        await ctx.replyWithHTML(`<b>Вот вы и в разделе обучения!</b>\n\nНиже для вас представлен список статей🎲\n`
-                        + `❓ В конце каждой вы можете проверить свои знания\n`
-                        + `❓ Нажмите на название, чтобы приступить к прочтению`, 
+                        await ctx.replyWithHTML(`${ctx.i18n.t('scenes.vic.text')}`, 
                         Extra.HTML({parse_mode: 'HTML'})
                         .markup(Markup.inlineKeyboard(await convertListToMarkup())))                    
                         ctx.webhookReply = true
@@ -37,7 +35,7 @@ class VictorySceneGenerator{
                                 delete deepClone['options']
                                 deepClone.reply_markup = JSON.stringify({
                                     inline_keyboard: [[
-                                        {text: 'Готово/Отменить', callback_data: `stop_poll`}
+                                        {text: `${ctx.i18n.t('scenes.vic.ok')}`, callback_data: `stop_poll`}
                                     ]]})
                                 ctx.webhookReply = false
                                 stack.push(await ctx.replyWithPoll(
@@ -52,14 +50,17 @@ class VictorySceneGenerator{
                 )           
                 require('../util/globalCommands')(item)
 
-                item.action(/fond|prod|news|redVic/, async ctx => {
-                    const callbackQuery = ctx.callbackQuery.data
-                    await ctx.scene.enter(callbackQuery)     
-                })
-
                 item.action(/stop_poll/, async ctx => {
                     clearStack(ctx)
                 })
+
+                item.hears(/🏢|📈|🧞/, async ctx =>
+                    {
+                        const text = ctx.message.text
+                        const scene = text.charAt(0)+text.charAt(1)
+                        await ctx.scene.enter(scene)
+                    }  
+                  );
 
                 item.action(/art#(.+)/, async ctx => {
                     
@@ -76,7 +77,7 @@ class VictorySceneGenerator{
                         stack.push(await ctx.replyWithHTML(`<b>${element.title}</b>\n\n${element.article}`,
                         Extra.HTML()
                         .markup(Markup.inlineKeyboard([
-                            [Markup.callbackButton('✏️Пройти тестирование', 'test')],
+                            [Markup.callbackButton(`${ctx.i18n.t('scenes.vic.start')}`, 'test')],
                         ]))))
                         ctx.webhookReply = true 
                     }                  

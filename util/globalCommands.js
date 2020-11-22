@@ -2,36 +2,33 @@ const Markup = require('telegraf/markup')
 const Extra = require('telegraf/extra')
 const file = require('../data/info.json')
 const bcrypt = require('bcryptjs')
+const { match } = require('telegraf-i18n')
 
-const help =  `<b>Управлять мной довольно просто:\n\n</b>` 
-            + `   ✔️ С помощью команд и кнопок вы всегда найдете нужный раздел\n`
-            + `   ✔️ Когда захотите снова увидеть эту инструкию, используйте /help \n`
-            + `   ✔️ Чтобы продолжить работу со мной, просто позовите меня!😁 /bot \n\n`
-            + `<b>Посмотрите, что я умею 😎... \n\n</b>`
-            + `   📈 Наблюдайте за динамичной жизнью фондового рынка с помощью нашей Новостной ленты\n`         
-            + `   👩🏻‍🎓 В нашем разделе обучения вы можете найти полезные статьи по акциям, а также поучаствовать в мини-викторине\n`
-            + `   🏢 Хотите узнать о нас больше? Информация о фонде будет находиться в разделе Фонд\n`          
-            + `   🧞 Советуем вам ознакомиться с нашими продуктами, представленными в разделе Услуги\n`
 
 module.exports = (bot) => {
     bot.start( async ctx => {
-        const userId = ctx.from.id
-        const userFirstName = ctx.from.first_name
-        const sayHello = `<b>Рад видеть вас здесь, <a href="tg://user?id=${userId}">${userFirstName}</a>!</b>`
-        const description = `\n\nВиртуальный помощник инвестиционного фонда ${file.fondInfo.name} к вашим услугам!`
-        + ` Я буду держать вас в курсе последних новостей фондового рынка, сопровождать на пути инвестирования, а также расскажу о своих преимуществах!`
-        const end = `\n\n<i>Добро пожаловать к нам 🏁</i>`
-      
-        reply = `${sayHello+description+end}`
+        const reply = ctx.i18n.t('start', {
+            userId: ctx.from.id,
+            userFirstName: ctx.from.first_name,
+            name: file.fondInfo.name
+        })
         await ctx.replyWithHTML(`${reply}`)
         menuCommand(ctx)
       })
     
     bot.help( async ctx => {
-        await ctx.replyWithHTML(`${help}`)
+        await ctx.replyWithHTML(`${ctx.i18n.t('help')}`)
     })
     
     bot.command('bot', ctx => menuCommand(ctx))
+
+    bot.action(/^(?:(ru|en))$/, async ctx => {
+        const callbackQuery = ctx.callbackQuery.data
+        ctx.i18n.locale(callbackQuery);
+        const message = ctx.i18n.t('change')
+        await ctx.replyWithHTML(message)
+        menuCommand(ctx)
+    })
 
     bot.command('admin', async ctx => {
         try{
@@ -42,21 +39,34 @@ module.exports = (bot) => {
             if (bcrypt.compareSync(password, process.env.ADMIN_PASSWORD))
                  ctx.scene.enter('admin')
             else
-            await ctx.reply("У вас нет доступа к данному режиму")
+            await ctx.reply(`${ctx.i18n.t('admin')}`)
         }catch(e){}
       })
+    
+    bot.hears(match('lang'), async ctx => langChange(ctx))
 }
 
 async function menuCommand(ctx){
     await ctx.scene.leave()
-    await ctx.replyWithHTML('<b>Чем я могу вам послужить?</b>\nДля перехода в нужный раздел, воспользуйтесь кнопками:',
+    await ctx.replyWithHTML(`${ctx.i18n.t('scenes.menu.text')}`,
     Extra.HTML()
-    .markup(Markup.inlineKeyboard([
-    [
-        Markup.callbackButton('👩🏻‍🎓Обучающий раздел', 'vic'),
-        Markup.callbackButton('🏢Фонд', 'fond')],
-    [
-        Markup.callbackButton('📈Новостная лента', 'news'),
-        Markup.callbackButton('🧞Наши услуги', 'prod')]
-    ])))
+    .markup(Markup.keyboard(
+        [
+            [`${ctx.i18n.t('scenes.menu.buttons.vic')}`,
+            `${ctx.i18n.t('scenes.menu.buttons.fond')}`],
+            [`${ctx.i18n.t('scenes.menu.buttons.news')}`,
+            `${ctx.i18n.t('scenes.menu.buttons.prod')}`],
+            [`${ctx.i18n.t('lang')}`, '/bot']
+        ]).resize()))
+}
+
+async function langChange(ctx){
+    await ctx.reply(`${ctx.i18n.t('selectLang')}`,
+        Extra.HTML().markup(Markup.inlineKeyboard(
+            [
+                Markup.callbackButton('🇺🇸 English', 'en'),
+                Markup.callbackButton('🇷🇺 Русский', 'ru')
+            ]
+        ))
+    )
 }

@@ -90,7 +90,7 @@ class VictorySceneGenerator{
                             element = victoryList.filter(item => item.title === callbackQuery)[0]
                             if (typeof element !== "undefined"){            
                                 editVictory(ctx)   
-                            }else if (callbackQuery.search(/vic|news|fond|prod/)){
+                            }else if (callbackQuery.search(/red/)){
                                 const callbackQuery = ctx.callbackQuery.data
                                 await ctx.scene.enter(callbackQuery)  
                             }else if (callbackQuery === "admin"){
@@ -132,6 +132,14 @@ class VictorySceneGenerator{
                 clearStack(ctx)
                 callbackQuery =''
             })
+
+            item.hears(/👩🏻‍🎓|🏢|📈|🧞/, async ctx =>
+                {
+                    const text = ctx.message.text
+                    const scene = text.charAt(0)+text.charAt(1)
+                    await ctx.scene.enter(scene)
+                }  
+              );
 
             item.leave(async ctx => {
                 clearStack(ctx)

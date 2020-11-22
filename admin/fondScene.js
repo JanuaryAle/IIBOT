@@ -84,7 +84,7 @@ class FondSceneGenerator{
                         element = answers.values[+(callbackQuery)]
                         stack.push(await ctx.editMessageText(`Вопрос:\n${element.question}\n\nОтвет:\n${element.answer}`, Extra.HTML().markup(Markup.inlineKeyboard([Markup.callbackButton('🗑Удалить', 'удалить'), Markup.callbackButton('Отмена', 'отмена')]))))
                         ctx.webhookReply = true
-                    }else if (callbackQuery.search(/vic|news|fond|prod/)){
+                    }else if (callbackQuery.search(/red/)){
                         const callbackQuery = ctx.callbackQuery.data
                         await ctx.scene.enter(callbackQuery)  
                     }else if (callbackQuery === "admin"){
@@ -135,6 +135,14 @@ class FondSceneGenerator{
             }
         })
 
+        item.hears(/👩🏻‍🎓|🏢|📈|🧞/, async ctx =>
+            {
+                const text = ctx.message.text
+                const scene = text.charAt(0)+text.charAt(1)
+                await ctx.scene.enter(scene)
+            }  
+          );
+
         item.leave(async ctx => {
             clearStack(ctx)
             ctx.telegram.deleteMessage(startMessage.chat.id, startMessage.message_id)
@@ -171,7 +179,9 @@ function convertKeyboard(element){
 function clearStack(ctx){  
     stack.forEach((item, i) => {
             if (item.message_id){
-                ctx.telegram.deleteMessage(item.chat.id, item.message_id)
+                try{
+                    ctx.telegram.deleteMessage(item.chat.id, item.message_id)
+                }catch(e){}
             }
     })
     stack = []
